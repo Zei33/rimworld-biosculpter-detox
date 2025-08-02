@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>デトックス</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>居住者のすべての薬物依存症と離脱症状を除去します。この高度な医療サイクルは、バイオスカルプター技術を使用して体から依存性物質を浄化し、神経化学的依存をリセットします。</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>デトックス完了！</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>依存症が見つかりません</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>デトックス治療完了</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0}はバイオスカルプターポッドでのデトックス治療を無事に完了しました。すべての薬物依存症と離脱症状がシステムから除去されました。</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>治療する依存症がありません</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>治療対象：{0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>治療中：{0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>依存症が検出されませんでした - サイクルは効果なしで完了します</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>

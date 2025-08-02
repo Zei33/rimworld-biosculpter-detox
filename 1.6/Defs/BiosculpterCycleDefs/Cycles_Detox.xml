@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- 
+  This file exists to satisfy the game's parsing requirements but doesn't define any actual defs.
+  The detox cycle is added dynamically via Harmony patches in BiosculpterPatches.cs.
+  -->
+</Defs>

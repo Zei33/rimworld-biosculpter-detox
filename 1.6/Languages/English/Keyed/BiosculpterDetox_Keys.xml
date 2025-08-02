@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>detox</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>Remove all drug addictions and withdrawal effects from the occupant. This advanced medical cycle uses biosculpting technology to cleanse the body of addictive substances and reset neurochemical dependencies.</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>Detox complete!</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>No addictions found</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>Detox Treatment Complete</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0} has successfully completed detox treatment in the biosculpter pod. All drug addictions and withdrawal effects have been cleansed from their system.</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>No addictions to treat</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>Will treat: {0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>Treating: {0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>No addictions detected - cycle will complete without effect</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>

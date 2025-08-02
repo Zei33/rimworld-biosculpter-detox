@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>desintoxicación</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>Eliminar todas las adicciones a drogas y efectos de abstinencia del ocupante. Este ciclo médico avanzado utiliza tecnología biosculptora para limpiar el cuerpo de sustancias adictivas y restablecer las dependencias neuroquímicas.</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>¡Desintoxicación completa!</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>No se encontraron adicciones</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>Tratamiento de desintoxicación completado</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0} ha completado exitosamente el tratamiento de desintoxicación en la cápsula biosculptora. Todas las adicciones a drogas y efectos de abstinencia han sido eliminados del sistema.</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>No hay adicciones que tratar</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>Tratará: {0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>Tratando: {0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>No se detectaron adicciones - el ciclo se completará sin efecto</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>

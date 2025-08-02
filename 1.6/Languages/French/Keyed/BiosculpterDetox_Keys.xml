@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>désintoxication</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>Éliminer toutes les addictions aux drogues et les effets de sevrage de l'occupant. Ce cycle médical avancé utilise la technologie biosculptrice pour nettoyer le corps des substances addictives et réinitialiser les dépendances neurochimiques.</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>Désintoxication terminée !</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>Aucune addiction trouvée</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>Traitement de désintoxication terminé</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0} a terminé avec succès le traitement de désintoxication dans la capsule biosculptrice. Toutes les addictions aux drogues et les effets de sevrage ont été éliminés de son système.</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>Aucune addiction à traiter</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>Traitera : {0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>Traitement en cours : {0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>Aucune addiction détectée - le cycle se terminera sans effet</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>

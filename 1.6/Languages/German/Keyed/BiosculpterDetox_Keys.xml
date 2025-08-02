@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>Entgiftung</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>Alle Drogenabhängigkeiten und Entzugserscheinungen des Insassen entfernen. Dieser fortschrittliche medizinische Zyklus nutzt Bioskulptur-Technologie, um den Körper von suchterzeugenden Substanzen zu reinigen und neurochemische Abhängigkeiten zurückzusetzen.</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>Entgiftung abgeschlossen!</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>Keine Sucht gefunden</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>Entgiftungsbehandlung abgeschlossen</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0} hat die Entgiftungsbehandlung in der Bioskulptur-Kapsel erfolgreich abgeschlossen. Alle Drogenabhängigkeiten und Entzugserscheinungen wurden aus dem System entfernt.</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>Keine Sucht zu behandeln</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>Wird behandeln: {0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>Behandelt: {0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>Keine Sucht erkannt - Zyklus wird ohne Wirkung abgeschlossen</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>

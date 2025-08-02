@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>детоксикация</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>Удалить все наркотические зависимости и симптомы отмены у обитателя. Этот продвинутый медицинский цикл использует биоскульптурную технологию для очищения организма от вызывающих привыкание веществ и сброса нейрохимических зависимостей.</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>Детоксикация завершена!</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>Зависимостей не обнаружено</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>Детоксикационное лечение завершено</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0} успешно завершил детоксикационное лечение в биоскульптурной капсуле. Все наркотические зависимости и симптомы отмены были удалены из системы.</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>Нет зависимостей для лечения</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>Будет лечить: {0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>Лечение: {0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>Зависимостей не обнаружено - цикл завершится без эффекта</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>

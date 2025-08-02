@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  
+  <!-- Cycle definition -->
+  <BiosculpterDetox_CycleLabel>detoks</BiosculpterDetox_CycleLabel>
+  <BiosculpterDetox_CycleDescription>Usuń wszystkie uzależnienia od narkotyków i objawy odstawienia u mieszkańca. Ten zaawansowany cykl medyczny wykorzystuje technologię bioskulptora do oczyszczenia organizmu z substancji uzależniających i przywrócenia zależności neurochemicznych.</BiosculpterDetox_CycleDescription>
+  
+  <!-- Cycle completion messages -->
+  <BiosculpterDetox_DetoxComplete>Detoks zakończony!</BiosculpterDetox_DetoxComplete>
+  <BiosculpterDetox_NoAddictions>Nie znaleziono uzależnień</BiosculpterDetox_NoAddictions>
+  
+  <!-- Letter messages -->
+  <BiosculpterDetox_LetterTitle>Leczenie detoksykacyjne zakończone</BiosculpterDetox_LetterTitle>
+  <BiosculpterDetox_LetterText>{0} pomyślnie zakończył leczenie detoksykacyjne w kapsule bioskulptora. Wszystkie uzależnienia od narkotyków i objawy odstawienia zostały usunięte z systemu.</BiosculpterDetox_LetterText>
+  
+  <!-- Gizmo and UI messages -->
+  <BiosculpterDetox_NoAddictionsToTreat>Brak uzależnień do leczenia</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_WillTreat>Będzie leczyć: {0}</BiosculpterDetox_WillTreat>
+  <BiosculpterDetox_TreatingConditions>Leczenie: {0}</BiosculpterDetox_TreatingConditions>
+  <BiosculpterDetox_NoConditionsToTreat>Nie wykryto uzależnień - cykl zakończy się bez efektu</BiosculpterDetox_NoConditionsToTreat>
+  
+</LanguageData>
