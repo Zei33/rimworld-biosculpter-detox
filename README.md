@@ -2,6 +2,9 @@
 
 A RimWorld mod that adds a detox cycle to biosculpter pods, allowing pawns to cure drug addictions and withdrawal symptoms through advanced medical technology.
 
+![RimWorld Version](https://img.shields.io/badge/RimWorld-1.6-brightgreen.svg)
+![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)
+
 ## Features
 
 ### 🧬 Advanced Detox Treatment
@@ -44,7 +47,7 @@ A RimWorld mod that adds a detox cycle to biosculpter pods, allowing pawns to cu
 4. **Choose "Enter biosculpter pod"** from the context menu
 5. **Select the Detox cycle** from the available options
 6. **Wait 12 days** for the treatment to complete
-7. **Enjoy addiction-free pawn** with positive mood buff!
+7. **Enjoy addiction-free pawn**
 
 ### Smart UI Features
 - **Availability Check**: Detox option only appears for pawns with treatable addictions
@@ -127,28 +130,24 @@ A: Report the specific drug mod - we can add explicit support
 **Q: Pawn still has withdrawal after detox**
 A: This should not happen - please report with a save file
 
-### Reporting Bugs
-When reporting issues, please include:
-- List of other mods you're using
-- Steps to reproduce the problem  
-- Save file if possible
-- Any error messages from the dev console
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
 ### Development
 - **Author**: Zei33
-- **Based on**: Simple Improve mod architecture
-- **Inspired by**: Community requests for humane addiction treatment
+
+## Support
+
+- **Issues**: Report bugs via GitHub Issues
+- **Discussions**: Join the conversation on Steam Workshop
+- **Updates**: Watch this repository for new releases and features
 
 ### Special Thanks
 - RimWorld modding community for guidance and feedback
 - Ludeon Studios for creating an amazing and moddable game
-- Translators who contributed localization support
-
-## License
-
-This mod is released under the MIT License. Feel free to learn from, modify, or extend the code while respecting the original authorship.
 
 ---
 
