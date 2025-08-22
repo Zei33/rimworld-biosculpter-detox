@@ -2,7 +2,7 @@
 <ModMetaData>
   <name>Biosculpter Detox</name>
   <author>Zei33</author>
-  <modVersion>1.0.0</modVersion>
+  <modVersion>1.0.1</modVersion>
   <packageId>Zei33.BiosculpterDetox</packageId>
   <description>Adds a detox mechanic to the biosculpter. This provides a quick and safe method for curing drug addictions.</description>
   <supportedVersions>

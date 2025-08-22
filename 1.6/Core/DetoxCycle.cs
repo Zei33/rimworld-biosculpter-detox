@@ -45,6 +45,15 @@ namespace BiosculpterDetox.Core
         };
 
         /// <summary>
+        /// List of addiction hediff definitions that should NEVER be removed by detox.
+        /// These are permanent addictions that cannot be cured through normal medical means.
+        /// </summary>
+        private static readonly List<string> NonDetoxifiableAddictions = new List<string>
+        {
+            "LuciferiumAddiction"  // Luciferium is permanent - "there is no way to get the mechanites out, ever"
+        };
+
+        /// <summary>
         /// Performs the detox treatment on a pawn, removing all drug addictions and withdrawal effects.
         /// This method is called when the biosculpter detox cycle completes.
         /// </summary>
@@ -81,13 +90,20 @@ namespace BiosculpterDetox.Core
                     Log.Message($"[BiosculpterDetox] Removing withdrawal: {hediff.def.defName} from {pawn.Name}");
                 }
                 // Also check for generic addiction patterns (for modded drugs)
-                else if (hediff.def.defName.StartsWith("Addiction_") || 
+                // But exclude any addictions that are explicitly non-detoxifiable
+                else if ((hediff.def.defName.StartsWith("Addiction_") || 
                          hediff.def.defName.EndsWith("Withdrawal") ||
-                         hediff.def.defName.EndsWith("Addiction"))
+                         hediff.def.defName.EndsWith("Addiction")) &&
+                         !NonDetoxifiableAddictions.Contains(hediff.def.defName))
                 {
                     hediffsToRemove.Add(hediff);
                     removedAny = true;
                     Log.Message($"[BiosculpterDetox] Removing modded addiction/withdrawal: {hediff.def.defName} from {pawn.Name}");
+                }
+                // Log when we encounter non-detoxifiable addictions
+                else if (NonDetoxifiableAddictions.Contains(hediff.def.defName))
+                {
+                    Log.Message($"[BiosculpterDetox] Skipping non-detoxifiable addiction: {hediff.def.defName} on {pawn.Name} (permanent addiction)");
                 }
             }
 
@@ -143,12 +159,19 @@ namespace BiosculpterDetox.Core
             {
                 if (hediff?.def?.defName == null) continue;
 
-                // Look for tolerance hediffs
-                if (hediff.def.defName.Contains("Tolerance") || 
-                    hediff.def.defName.EndsWith("_Tolerance"))
+                // Look for tolerance hediffs, but exclude luciferium tolerance
+                if ((hediff.def.defName.Contains("Tolerance") || 
+                     hediff.def.defName.EndsWith("_Tolerance")) &&
+                    !hediff.def.defName.Contains("Luciferium"))
                 {
                     tolerancesToRemove.Add(hediff);
                     Log.Message($"[BiosculpterDetox] Removing tolerance: {hediff.def.defName} from {pawn.Name}");
+                }
+                // Log when we skip luciferium tolerance
+                else if (hediff.def.defName.Contains("Luciferium") && 
+                        (hediff.def.defName.Contains("Tolerance") || hediff.def.defName.EndsWith("_Tolerance")))
+                {
+                    Log.Message($"[BiosculpterDetox] Skipping luciferium tolerance: {hediff.def.defName} on {pawn.Name} (permanent)");
                 }
             }
 
@@ -170,12 +193,13 @@ namespace BiosculpterDetox.Core
 
             return pawn.health.hediffSet.hediffs.Any(hediff =>
                 hediff?.def?.defName != null &&
+                !NonDetoxifiableAddictions.Contains(hediff.def.defName) &&
                 (DetoxifiableAddictions.Contains(hediff.def.defName) ||
                  DetoxifiableWithdrawals.Contains(hediff.def.defName) ||
                  hediff.def.defName.StartsWith("Addiction_") ||
                  hediff.def.defName.EndsWith("Withdrawal") ||
                  hediff.def.defName.EndsWith("Addiction") ||
-                 hediff.def.defName.Contains("Tolerance")));
+                 (hediff.def.defName.Contains("Tolerance") && !hediff.def.defName.Contains("Luciferium"))));
         }
 
         /// <summary>
@@ -194,11 +218,12 @@ namespace BiosculpterDetox.Core
             {
                 if (hediff?.def == null) continue;
 
-                if (DetoxifiableAddictions.Contains(hediff.def.defName) ||
-                    DetoxifiableWithdrawals.Contains(hediff.def.defName) ||
-                    hediff.def.defName.StartsWith("Addiction_") ||
-                    hediff.def.defName.EndsWith("Withdrawal") ||
-                    hediff.def.defName.EndsWith("Addiction"))
+                if (!NonDetoxifiableAddictions.Contains(hediff.def.defName) &&
+                    (DetoxifiableAddictions.Contains(hediff.def.defName) ||
+                     DetoxifiableWithdrawals.Contains(hediff.def.defName) ||
+                     hediff.def.defName.StartsWith("Addiction_") ||
+                     hediff.def.defName.EndsWith("Withdrawal") ||
+                     hediff.def.defName.EndsWith("Addiction")))
                 {
                     // Use the hediff's label for display, or fall back to def name
                     string displayName = hediff.LabelCap;
