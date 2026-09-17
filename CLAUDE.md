@@ -152,9 +152,28 @@ dotnet build rimworld-biosculpter-detox.sln -c Release   # clean, zero warnings
 - Building writes into `1.6/Assemblies/net472/`, which `.gitignore` now excludes outright.
   `BiosculpterDetox.dll`, `.pdb` and the two game DLLs were removed from the index on 2026-09-17, so a
   build no longer dirties the tree.
-- Nothing is unit-testable today: every entry point takes a `Pawn` or touches `DefDatabase`,
-  `Find.LetterStack` or `.Translate()`. The practical harness is a dev-mode `[DebugAction]` printing what
-  `PerformDetox` would remove from the selected pawn without removing it.
+- Tests: `dotnet test Tests/BiosculpterDetox.Tests.csproj`, 9 passing as of 2026-09-17. Outside the
+  sln, and `Compile Remove="Tests/**"` keeps them out of the shipped DLL. See `Tests/README.md`.
+- The mod's behaviour is still not unit-testable: every entry point takes a `Pawn`. What the tests
+  cover instead is the hardcoded defNames, read from the game's shipped XML and checked against
+  `HediffDef` **specifically**. That type restriction is the whole point and has a test of its own:
+  six of the eight withdrawal names exist as `ThoughtDef`s, so an untyped check would pass and
+  certify a dead list as healthy.
+- **All 17 names in both detoxifiable lists are dead.** `DetoxifiableAddictions` spells every entry
+  `Addiction_Alcohol`; the real hediffs are `AlcoholAddiction`, suffix not prefix. Of
+  `DetoxifiableWithdrawals`, six are `ThoughtDef`s and `FlakeWithdrawal` and `YayoWithdrawal` do not
+  exist at all. Further: **there is no withdrawal `HediffDef` in 1.6 at all**, so the
+  `EndsWith("Withdrawal")` fallback cannot fire either and the withdrawal half of this mod has never
+  removed anything. The mod works only through `EndsWith("Addiction")`, which catches all seven real
+  addiction hediffs, with `LuciferiumAddiction` correctly excluded. Confirm with the test suite
+  before acting on issues #4 and #5.
+- The three copies of the match test are **not identical**, and that is defect B-1 (#1).
+  `HasDetoxifiableConditions` counts tolerances, `PerformDetox` and `GetDetoxifiableConditionNames`
+  do not. A tolerance-only pawn therefore passes the eligibility gate, has the tolerance removed, is
+  listed as having nothing to treat, and is reported as a failure. Do not unify them as a tidy-up;
+  that is the fix, and it belongs to #1.
+- A dev-mode `[DebugAction]` printing what `PerformDetox` would remove from the selected pawn,
+  without removing it, is still the only way to check the behaviour itself.
 - An in-game check needs Ideology, the Bioregeneration research, a pod and a genuinely addicted pawn.
   Detox is always last in the gizmo bar, since the comp is appended after the four vanilla cycle comps.
 
