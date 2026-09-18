@@ -3,20 +3,18 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>戒毒</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>消除居住者的所有毒品成瘾和戒断症状。这种先进的医疗周期使用生物雕塑技术来清洁身体的成瘾物质并重置神经化学依赖性。</BiosculpterDetox_CycleDescription>
-  
-  <!-- Cycle completion messages -->
-  <BiosculpterDetox_DetoxComplete>戒毒完成！</BiosculpterDetox_DetoxComplete>
-  <BiosculpterDetox_NoAddictions>未发现成瘾症状</BiosculpterDetox_NoAddictions>
+  <BiosculpterDetox_CycleDescription>清除舱内小人的所有药物成瘾与药物耐受性。戒断反应会随着引发它的成瘾一同消失。永久性成瘾（如魔鬼素）无法治愈。</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>戒毒治疗完成</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0}已在生物雕塑舱中成功完成戒毒治疗。所有毒品成瘾和戒断症状都已从他们的系统中清除。</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0}已在生物塑造舱中完成戒毒治疗。所有可治疗的药物成瘾与药物耐受性均已清除。</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_Cured>已治愈：{0}</BiosculpterDetox_Cured>
+  <BiosculpterDetox_NoConditionsLetterTitle>戒毒完成：无需治疗</BiosculpterDetox_NoConditionsLetterTitle>
+  <BiosculpterDetox_NoConditionsLetterText>{0}已完成戒毒周期，但没有需要治疗的药物成瘾或药物耐受性。本次周期没有产生任何效果。</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
   <BiosculpterDetox_NoAddictionsToTreat>没有成瘾需要治疗</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>将治疗：{0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_TreatingConditions>正在治疗：{0}</BiosculpterDetox_TreatingConditions>
-  <BiosculpterDetox_NoConditionsToTreat>未检测到成瘾症状 - 周期将无效果完成</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>未检测到成瘾或药物耐受性。本次周期将不会产生任何效果。</BiosculpterDetox_NoConditionsToTreat>
   
 </LanguageData>

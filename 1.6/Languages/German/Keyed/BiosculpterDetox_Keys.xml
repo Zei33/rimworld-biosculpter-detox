@@ -3,20 +3,18 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>Entgiftung</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Alle Drogenabhängigkeiten und Entzugserscheinungen des Insassen entfernen. Dieser fortschrittliche medizinische Zyklus nutzt Bioskulptur-Technologie, um den Körper von suchterzeugenden Substanzen zu reinigen und neurochemische Abhängigkeiten zurückzusetzen.</BiosculpterDetox_CycleDescription>
-  
-  <!-- Cycle completion messages -->
-  <BiosculpterDetox_DetoxComplete>Entgiftung abgeschlossen!</BiosculpterDetox_DetoxComplete>
-  <BiosculpterDetox_NoAddictions>Keine Sucht gefunden</BiosculpterDetox_NoAddictions>
+  <BiosculpterDetox_CycleDescription>Entfernt jede Drogensucht und jede Drogentoleranz des Insassen. Der Entzug endet mit der Sucht, die ihn verursacht. Dauerhafte Süchte wie Luciferium können nicht geheilt werden.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Entgiftungsbehandlung abgeschlossen</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0} hat die Entgiftungsbehandlung in der Bioskulptur-Kapsel erfolgreich abgeschlossen. Alle Drogenabhängigkeiten und Entzugserscheinungen wurden aus dem System entfernt.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0} hat die Entgiftung in der Biosculpter-Kapsel abgeschlossen. Jede behandelbare Drogensucht und Drogentoleranz wurde entfernt.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_Cured>Geheilt: {0}</BiosculpterDetox_Cured>
+  <BiosculpterDetox_NoConditionsLetterTitle>Entgiftung abgeschlossen: nichts zu behandeln</BiosculpterDetox_NoConditionsLetterTitle>
+  <BiosculpterDetox_NoConditionsLetterText>{0} hat den Entgiftungszyklus abgeschlossen, hatte aber weder Drogensucht noch Drogentoleranz zu behandeln. Der Zyklus blieb ohne Wirkung.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
   <BiosculpterDetox_NoAddictionsToTreat>Keine Sucht zu behandeln</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Wird behandeln: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_TreatingConditions>Behandelt: {0}</BiosculpterDetox_TreatingConditions>
-  <BiosculpterDetox_NoConditionsToTreat>Keine Sucht erkannt - Zyklus wird ohne Wirkung abgeschlossen</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Keine Sucht und keine Drogentoleranz festgestellt. Der Zyklus wird ohne Wirkung enden.</BiosculpterDetox_NoConditionsToTreat>
   
 </LanguageData>

@@ -3,20 +3,18 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>désintoxication</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Éliminer toutes les addictions aux drogues et les effets de sevrage de l'occupant. Ce cycle médical avancé utilise la technologie biosculptrice pour nettoyer le corps des substances addictives et réinitialiser les dépendances neurochimiques.</BiosculpterDetox_CycleDescription>
-  
-  <!-- Cycle completion messages -->
-  <BiosculpterDetox_DetoxComplete>Désintoxication terminée !</BiosculpterDetox_DetoxComplete>
-  <BiosculpterDetox_NoAddictions>Aucune addiction trouvée</BiosculpterDetox_NoAddictions>
+  <BiosculpterDetox_CycleDescription>Supprime toutes les addictions et toutes les tolérances aux drogues de l'occupant. Le manque disparaît avec l'addiction qui le cause. Les addictions permanentes comme le luciferium ne peuvent pas être soignées.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Traitement de désintoxication terminé</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0} a terminé avec succès le traitement de désintoxication dans la capsule biosculptrice. Toutes les addictions aux drogues et les effets de sevrage ont été éliminés de son système.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0} a terminé sa désintoxication dans la nacelle de biosculptage. Toutes les addictions et toutes les tolérances aux drogues qui pouvaient être traitées ont été supprimées.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_Cured>Soigné : {0}</BiosculpterDetox_Cured>
+  <BiosculpterDetox_NoConditionsLetterTitle>Désintoxication terminée : rien à traiter</BiosculpterDetox_NoConditionsLetterTitle>
+  <BiosculpterDetox_NoConditionsLetterText>{0} a terminé le cycle de désintoxication, mais n'avait aucune addiction ni tolérance aux drogues à traiter. Le cycle n'a eu aucun effet.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
   <BiosculpterDetox_NoAddictionsToTreat>Aucune addiction à traiter</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Traitera : {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_TreatingConditions>Traitement en cours : {0}</BiosculpterDetox_TreatingConditions>
-  <BiosculpterDetox_NoConditionsToTreat>Aucune addiction détectée - le cycle se terminera sans effet</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Aucune addiction ni tolérance aux drogues détectée. Le cycle se terminera sans effet.</BiosculpterDetox_NoConditionsToTreat>
   
 </LanguageData>

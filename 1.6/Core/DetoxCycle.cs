@@ -6,239 +6,277 @@ using Verse;
 namespace BiosculpterDetox.Core
 {
     /// <summary>
-    /// Core logic for the biosculpter detox cycle.
-    /// Handles the removal of drug addictions and withdrawal effects from pawns.
+    /// Decides what a detox cycle treats, and performs the treatment.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Everything here used to be decided by matching hediff defNames as strings:
+    /// <c>StartsWith("Addiction_")</c>, <c>EndsWith("Addiction")</c>,
+    /// <c>EndsWith("Withdrawal")</c> and <c>Contains("Tolerance")</c>, against two allow-lists and
+    /// one deny-list. The allow-lists were entirely dead. Not one of the nine names in the
+    /// addiction list exists as a def of any type in any version of RimWorld, and the real names
+    /// are <c>AlcoholAddiction</c>, <c>PsychiteAddiction</c> and so on. The mod worked by accident,
+    /// through the catch-all suffix test beside them.
+    /// </para>
+    /// <para>
+    /// A defName is a namespace other mods write into, so a substring test over it is unbounded by
+    /// construction. <c>Contains("Tolerance")</c> would remove any modded hediff with that
+    /// substring anywhere in its name, drug-related or not, and the failure is close to
+    /// unreportable: a hediff vanishing after a biosculpter cycle gets blamed on the mod that added
+    /// it. <c>EndsWith("Withdrawal")</c> has a confirmed victim in the shipped game already, since
+    /// Anomaly's <c>CubeWithdrawal</c> is a real HediffDef with its own class and nothing to do
+    /// with drugs.
+    /// </para>
+    /// <para>
+    /// All four string tests are replaced by the game's own structure, and the deny-list goes with
+    /// them. The predicates take the chemical list as a parameter rather than reading
+    /// <c>DefDatabase</c>, because the test harness cannot touch <c>DefDatabase</c> and naming any
+    /// <c>DefOf</c> member there throws. That is the whole reason the decisions in this file are
+    /// now reachable by a test at all.
+    /// </para>
+    /// </remarks>
     public static class DetoxCycle
     {
         /// <summary>
-        /// List of drug hediff definitions that can be detoxified.
-        /// These are the core addiction hediffs that the detox cycle can remove.
+        /// Decides whether a hediff is a drug addiction this cycle is allowed to cure.
         /// </summary>
-        private static readonly List<string> DetoxifiableAddictions = new List<string>
+        /// <param name="hediff">The hediff to judge.</param>
+        /// <returns><c>true</c> when it is a curable addiction.</returns>
+        /// <remarks>
+        /// <para>
+        /// This is vanilla's own predicate, copied from <c>HealthUtility.FindAddiction</c>. The type
+        /// test covers all seven shipped addictions and every modded one without an allow-list, and
+        /// <c>everCurableByItem</c> is how the game itself declares an addiction incurable. It is
+        /// what the vanilla biosculpter healing cycle gates on, so a detox cycle using it agrees
+        /// with the pod it bolts onto.
+        /// </para>
+        /// <para>
+        /// That replaces the hardcoded <c>LuciferiumAddiction</c> deny-list. Luciferium is still
+        /// excluded, but now because Ludeon declared it incurable rather than because this mod
+        /// spelled its name, so a modded permanent addiction is excluded too. Before, any modded
+        /// addiction whose defName merely ended in "Addiction" was cured by the pod.
+        /// </para>
+        /// <para>
+        /// The pair is load-bearing and neither half is redundant. <c>everCurableByItem</c> is a
+        /// general medical flag, not a drug flag: fourteen of the fifteen shipped defs that set it
+        /// false have nothing to do with drugs, so it is only safe ANDed with the type test.
+        /// And the type test alone would sweep up Biotech's <c>Hediff_ChemicalDependency</c>, which
+        /// carries a <c>ChemicalDef</c> just like an addiction does; removing that one is fatal,
+        /// because the gene re-adds it and the pawn dies without the drug. It happens to derive
+        /// from a different base AND to set the flag false, so this pair excludes it twice.
+        /// </para>
+        /// </remarks>
+        public static bool IsCurableAddiction(Hediff hediff)
         {
-            "Addiction_Alcohol",
-            "Addiction_Smokeleaf", 
-            "Addiction_Psychite",
-            "Addiction_WakeUp",
-            "Addiction_GoJuice",
-            "Addiction_Flake",
-            "Addiction_Yayo",
-            "Addiction_Beer",
-            "Addiction_Ambrosia"
-        };
+            return hediff is Hediff_Addiction && hediff.def != null && hediff.def.everCurableByItem;
+        }
 
         /// <summary>
-        /// List of withdrawal hediff definitions that should be removed during detox.
-        /// These are the withdrawal symptoms that occur when addictions are not satisfied.
+        /// Decides whether a hediff def is a drug tolerance.
         /// </summary>
-        private static readonly List<string> DetoxifiableWithdrawals = new List<string>
+        /// <param name="def">The def to judge.</param>
+        /// <param name="chemicals">Every chemical in the game.</param>
+        /// <returns><c>true</c> when the def is a drug tolerance.</returns>
+        /// <remarks>
+        /// <para>
+        /// Tolerance has no distinguishing class to type-test: every shipped tolerance inherits an
+        /// abstract base whose <c>hediffClass</c> is the plain <c>HediffWithComps</c>. The
+        /// structural marker is the comp, <c>HediffCompProperties_DrugEffectFactor</c>, which
+        /// carries a back-reference to the chemical it dampens, and which no other shipped hediff
+        /// declares.
+        /// </para>
+        /// <para>
+        /// Both clauses are wanted. The comp test is the semantic one and covers all seven shipped
+        /// tolerances, including <c>GoJuiceTolerance</c> and <c>WakeUpTolerance</c>, which are
+        /// orphans in 1.6 that no chemical points at any more. The back-reference catches a modded
+        /// tolerance that skips the comp. Chemicals are enumerated whole rather than filtered to
+        /// the addictive ones, because Odyssey's Psilocap has a tolerance and cannot be addictive.
+        /// </para>
+        /// <para>
+        /// This does NOT gate on <c>everCurableByItem</c>, unlike the addiction test. Every shipped
+        /// tolerance leaves that flag at its default true, so it would discriminate nothing here. A
+        /// Luciferium tolerance does not exist, which is why the old <c>Contains("Luciferium")</c>
+        /// guard beside the tolerance test was dead code; if a mod ever adds one, exclude it by
+        /// asking the comp which chemical it belongs to, never by name.
+        /// </para>
+        /// </remarks>
+        public static bool IsDrugTolerance(HediffDef def, IEnumerable<ChemicalDef> chemicals)
         {
-            "AlcoholWithdrawal",
-            "SmokeleafWithdrawal",
-            "PsychiteWithdrawal", 
-            "WakeUpWithdrawal",
-            "GoJuiceWithdrawal",
-            "FlakeWithdrawal",
-            "YayoWithdrawal",
-            "AmbrosiaWithdrawal"
-        };
-
-        /// <summary>
-        /// List of addiction hediff definitions that should NEVER be removed by detox.
-        /// These are permanent addictions that cannot be cured through normal medical means.
-        /// </summary>
-        private static readonly List<string> NonDetoxifiableAddictions = new List<string>
-        {
-            "LuciferiumAddiction"  // Luciferium is permanent - "there is no way to get the mechanites out, ever"
-        };
-
-        /// <summary>
-        /// Performs the detox treatment on a pawn, removing all drug addictions and withdrawal effects.
-        /// This method is called when the biosculpter detox cycle completes.
-        /// </summary>
-        /// <param name="pawn">The pawn undergoing detox treatment.</param>
-        /// <returns>True if any addictions or withdrawals were removed; otherwise, false.</returns>
-        public static bool PerformDetox(Pawn pawn)
-        {
-            if (pawn?.health?.hediffSet == null)
+            if (def == null)
             {
-                Log.Warning("[BiosculpterDetox] Attempted to detox null pawn or pawn without health.");
                 return false;
             }
 
-            bool removedAny = false;
-            var hediffsToRemove = new List<Hediff>();
-
-            // Find all detoxifiable addictions and withdrawals
-            foreach (var hediff in pawn.health.hediffSet.hediffs)
+            if (def.CompProps<HediffCompProperties_DrugEffectFactor>() != null)
             {
-                if (hediff?.def?.defName == null) continue;
-
-                // Check if this is a detoxifiable addiction
-                if (DetoxifiableAddictions.Contains(hediff.def.defName))
-                {
-                    hediffsToRemove.Add(hediff);
-                    removedAny = true;
-                    Log.Message($"[BiosculpterDetox] Removing addiction: {hediff.def.defName} from {pawn.Name}");
-                }
-                // Check if this is a detoxifiable withdrawal
-                else if (DetoxifiableWithdrawals.Contains(hediff.def.defName))
-                {
-                    hediffsToRemove.Add(hediff);
-                    removedAny = true;
-                    Log.Message($"[BiosculpterDetox] Removing withdrawal: {hediff.def.defName} from {pawn.Name}");
-                }
-                // Also check for generic addiction patterns (for modded drugs)
-                // But exclude any addictions that are explicitly non-detoxifiable
-                else if ((hediff.def.defName.StartsWith("Addiction_") || 
-                         hediff.def.defName.EndsWith("Withdrawal") ||
-                         hediff.def.defName.EndsWith("Addiction")) &&
-                         !NonDetoxifiableAddictions.Contains(hediff.def.defName))
-                {
-                    hediffsToRemove.Add(hediff);
-                    removedAny = true;
-                    Log.Message($"[BiosculpterDetox] Removing modded addiction/withdrawal: {hediff.def.defName} from {pawn.Name}");
-                }
-                // Log when we encounter non-detoxifiable addictions
-                else if (NonDetoxifiableAddictions.Contains(hediff.def.defName))
-                {
-                    Log.Message($"[BiosculpterDetox] Skipping non-detoxifiable addiction: {hediff.def.defName} on {pawn.Name} (permanent addiction)");
-                }
+                return true;
             }
 
-            // Remove all identified hediffs
-            foreach (var hediff in hediffsToRemove)
-            {
-                pawn.health.RemoveHediff(hediff);
-            }
-
-            // Clear any drug tolerances as well
-            RemoveDrugTolerances(pawn);
-
-            if (removedAny)
-            {
-                // Send notification about successful detox (only if pawn is on a map)
-                if (pawn.Map != null)
-                {
-                    MoteMaker.ThrowText(pawn.DrawPos, pawn.Map, 
-                        "BiosculpterDetox_DetoxComplete".Translate(), 6f);
-                }
-                
-                // Note: We don't add a physical hediff for detox completion
-                // The mental/mood benefits are handled by removing addictions
-                // and can be complemented by thoughts/memories if desired
-
-                Log.Message($"[BiosculpterDetox] Successfully detoxed {pawn.Name} - removed {hediffsToRemove.Count} addiction/withdrawal hediffs.");
-            }
-            else
-            {
-                // Show message if no addictions were found (only if pawn is on a map)
-                if (pawn.Map != null)
-                {
-                    MoteMaker.ThrowText(pawn.DrawPos, pawn.Map, 
-                        "BiosculpterDetox_NoAddictions".Translate(), 6f);
-                }
-                
-                Log.Message($"[BiosculpterDetox] No addictions found on {pawn.Name} during detox cycle.");
-            }
-
-            return removedAny;
+            return chemicals != null && chemicals.Any(chemical => chemical.toleranceHediff == def);
         }
 
         /// <summary>
-        /// Removes drug tolerance hediffs from the pawn.
-        /// Tolerance hediffs can contribute to addiction risk, so they should be cleared during detox.
+        /// Decides whether a hediff is anything this cycle treats.
         /// </summary>
-        /// <param name="pawn">The pawn to remove tolerances from.</param>
-        private static void RemoveDrugTolerances(Pawn pawn)
+        /// <param name="hediff">The hediff to judge.</param>
+        /// <param name="chemicals">Every chemical in the game.</param>
+        /// <returns><c>true</c> when the cycle would remove it.</returns>
+        /// <remarks>
+        /// <para>
+        /// One predicate, used by the eligibility gate, the preview and the removal alike. That is
+        /// the fix for the worst-behaved bug in this mod: the gate counted tolerances and the
+        /// preview did not, so a pawn whose only treatable condition was a drug tolerance was
+        /// offered the cycle, told the cycle would treat nothing, kept in the pod for twelve days,
+        /// quietly had the tolerance removed, and was then reported as a failure. Every one of
+        /// those four steps was a different method disagreeing with the others about the same
+        /// question, so the question is asked in one place now.
+        /// </para>
+        /// <para>
+        /// Withdrawal is deliberately absent, and its removal is not an omission. Withdrawal is not
+        /// a hediff at all: it is stage index 1 of the addiction hediff, selected at runtime from
+        /// the pawn's chemical need level. The mod's eight-name withdrawal list could never have
+        /// matched anything, six of those names being ThoughtDefs and two existing nowhere. Curing
+        /// the addiction removes the stage, removes the chemical need (which is declared
+        /// <c>onlyIfCausedByHediff</c>) and flips the withdrawal thought to inactive, all without
+        /// this mod touching needs or thoughts.
+        /// </para>
+        /// </remarks>
+        public static bool IsDetoxifiable(Hediff hediff, IEnumerable<ChemicalDef> chemicals)
         {
-            var tolerancesToRemove = new List<Hediff>();
-
-            foreach (var hediff in pawn.health.hediffSet.hediffs)
+            if (hediff == null || hediff.def == null)
             {
-                if (hediff?.def?.defName == null) continue;
-
-                // Look for tolerance hediffs, but exclude luciferium tolerance
-                if ((hediff.def.defName.Contains("Tolerance") || 
-                     hediff.def.defName.EndsWith("_Tolerance")) &&
-                    !hediff.def.defName.Contains("Luciferium"))
-                {
-                    tolerancesToRemove.Add(hediff);
-                    Log.Message($"[BiosculpterDetox] Removing tolerance: {hediff.def.defName} from {pawn.Name}");
-                }
-                // Log when we skip luciferium tolerance
-                else if (hediff.def.defName.Contains("Luciferium") && 
-                        (hediff.def.defName.Contains("Tolerance") || hediff.def.defName.EndsWith("_Tolerance")))
-                {
-                    Log.Message($"[BiosculpterDetox] Skipping luciferium tolerance: {hediff.def.defName} on {pawn.Name} (permanent)");
-                }
+                return false;
             }
 
-            foreach (var hediff in tolerancesToRemove)
-            {
-                pawn.health.RemoveHediff(hediff);
-            }
+            return IsCurableAddiction(hediff) || IsDrugTolerance(hediff.def, chemicals);
         }
 
         /// <summary>
-        /// Checks if a pawn has any detoxifiable addictions or withdrawals.
-        /// This is used to determine if the detox cycle should be available for a pawn.
+        /// Collects every condition on a pawn that this cycle would treat.
         /// </summary>
-        /// <param name="pawn">The pawn to check for addictions.</param>
-        /// <returns>True if the pawn has any detoxifiable conditions; otherwise, false.</returns>
+        /// <param name="pawn">The pawn to examine.</param>
+        /// <param name="chemicals">Every chemical in the game.</param>
+        /// <returns>The hediffs the cycle would remove, which may be empty.</returns>
+        public static List<Hediff> DetoxifiableConditions(Pawn pawn, IEnumerable<ChemicalDef> chemicals)
+        {
+            var found = new List<Hediff>();
+
+            if (pawn?.health?.hediffSet == null)
+            {
+                return found;
+            }
+
+            foreach (Hediff hediff in pawn.health.hediffSet.hediffs)
+            {
+                if (IsDetoxifiable(hediff, chemicals))
+                {
+                    found.Add(hediff);
+                }
+            }
+
+            return found;
+        }
+
+        /// <summary>
+        /// Checks if a pawn has any condition this cycle can treat.
+        /// </summary>
+        /// <param name="pawn">The pawn to check.</param>
+        /// <returns><c>true</c> if the pawn has any detoxifiable condition.</returns>
         public static bool HasDetoxifiableConditions(Pawn pawn)
         {
-            if (pawn?.health?.hediffSet == null) return false;
-
-            return pawn.health.hediffSet.hediffs.Any(hediff =>
-                hediff?.def?.defName != null &&
-                !NonDetoxifiableAddictions.Contains(hediff.def.defName) &&
-                (DetoxifiableAddictions.Contains(hediff.def.defName) ||
-                 DetoxifiableWithdrawals.Contains(hediff.def.defName) ||
-                 hediff.def.defName.StartsWith("Addiction_") ||
-                 hediff.def.defName.EndsWith("Withdrawal") ||
-                 hediff.def.defName.EndsWith("Addiction") ||
-                 (hediff.def.defName.Contains("Tolerance") && !hediff.def.defName.Contains("Luciferium"))));
+            return DetoxifiableConditions(pawn, AllChemicals()).Count > 0;
         }
 
         /// <summary>
-        /// Gets a human-readable description of the addictions that will be treated.
-        /// This is used for UI display to show what the detox cycle will cure.
+        /// Gets the display labels of the conditions this cycle would treat.
         /// </summary>
-        /// <param name="pawn">The pawn to analyze.</param>
-        /// <returns>A list of addiction names that can be treated.</returns>
+        /// <param name="pawn">The pawn to analyse.</param>
+        /// <returns>The distinct labels, in the order the hediffs appear on the pawn.</returns>
         public static List<string> GetDetoxifiableConditionNames(Pawn pawn)
         {
-            var conditions = new List<string>();
-            
-            if (pawn?.health?.hediffSet == null) return conditions;
+            var names = new List<string>();
 
-            foreach (var hediff in pawn.health.hediffSet.hediffs)
+            foreach (Hediff hediff in DetoxifiableConditions(pawn, AllChemicals()))
             {
-                if (hediff?.def == null) continue;
+                string label = hediff.LabelCap;
 
-                if (!NonDetoxifiableAddictions.Contains(hediff.def.defName) &&
-                    (DetoxifiableAddictions.Contains(hediff.def.defName) ||
-                     DetoxifiableWithdrawals.Contains(hediff.def.defName) ||
-                     hediff.def.defName.StartsWith("Addiction_") ||
-                     hediff.def.defName.EndsWith("Withdrawal") ||
-                     hediff.def.defName.EndsWith("Addiction")))
+                if (string.IsNullOrEmpty(label))
                 {
-                    // Use the hediff's label for display, or fall back to def name
-                    string displayName = hediff.LabelCap;
-                    if (string.IsNullOrEmpty(displayName))
-                    {
-                        displayName = hediff.def.LabelCap;
-                    }
-                    if (!conditions.Contains(displayName))
-                    {
-                        conditions.Add(displayName);
-                    }
+                    label = hediff.def.LabelCap;
+                }
+
+                if (!names.Contains(label))
+                {
+                    names.Add(label);
                 }
             }
 
-            return conditions;
+            return names;
+        }
+
+        /// <summary>
+        /// Removes every treatable condition from a pawn.
+        /// </summary>
+        /// <param name="pawn">The pawn undergoing treatment.</param>
+        /// <returns>The labels of what was removed, which is empty when nothing was.</returns>
+        /// <remarks>
+        /// <para>
+        /// This reports what it did and says nothing to the player. All feedback belongs to the
+        /// cycle component, which is the only place that knows the cycle has finished and is the
+        /// only place with a spawned thing to hang a message on. Moving it there is what fixes the
+        /// old accounting bug: the tolerance pass never set the <c>removedAny</c> flag, so a
+        /// tolerance-only detox removed the tolerance and then reported failure.
+        /// </para>
+        /// <para>
+        /// Removal goes through <c>HealthUtility.Cure</c> rather than
+        /// <c>pawn.health.RemoveHediff</c>, matching the vanilla healing cycle. <c>Cure</c> honours
+        /// <c>cureAllAtOnceIfCuredByItem</c>, which the raw call does not.
+        /// </para>
+        /// <para>
+        /// The list is materialised before anything is removed, which it has to be, since removing
+        /// a hediff mutates the set being walked. Hediffs are re-checked as they are cured, because
+        /// curing one can cascade and remove another.
+        /// </para>
+        /// </remarks>
+        public static List<string> PerformDetox(Pawn pawn)
+        {
+            var removed = new List<string>();
+
+            if (pawn?.health?.hediffSet == null)
+            {
+                Log.Warning("[BiosculpterDetox] Attempted to detox a null pawn or a pawn with no health tracker.");
+                return removed;
+            }
+
+            foreach (Hediff hediff in DetoxifiableConditions(pawn, AllChemicals()))
+            {
+                // Re-check rather than trusting the list. HealthUtility.Cure can remove more than
+                // the one hediff it is given, so an entry collected a moment ago may already be off
+                // the pawn by the time its turn comes.
+                if (!pawn.health.hediffSet.hediffs.Contains(hediff))
+                {
+                    continue;
+                }
+
+                string label = hediff.LabelCap;
+                HealthUtility.Cure(hediff);
+                removed.Add(label);
+            }
+
+            return removed;
+        }
+
+        /// <summary>
+        /// Gets every chemical the game knows about.
+        /// </summary>
+        /// <returns>The chemical defs.</returns>
+        /// <remarks>
+        /// Kept to one line and one call site per public method so that every decision above can be
+        /// handed a list by a test instead. <c>DefDatabase</c> is populated only by a running game.
+        /// </remarks>
+        private static List<ChemicalDef> AllChemicals()
+        {
+            return DefDatabase<ChemicalDef>.AllDefsListForReading;
         }
     }
 }

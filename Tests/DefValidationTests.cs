@@ -7,27 +7,52 @@ using NUnit.Framework;
 namespace BiosculpterDetox.Tests
 {
     /// <summary>
-    /// Checks the hardcoded defNames in <see cref="DetoxCycle"/> against the defs the game actually
-    /// ships, as <c>HediffDef</c> specifically.
+    /// Holds the facts about the shipped game that the detox predicates rest on.
     /// </summary>
     /// <remarks>
-    /// The mod walks <c>pawn.health.hediffSet.hediffs</c> and compares <c>hediff.def.defName</c>
-    /// against two hardcoded lists. A name that is not a real <c>HediffDef</c> can therefore never
-    /// match anything, no matter how plausible it looks.
-    ///
-    /// These tests pin what is true today rather than what ought to be true. Every list in this
-    /// class is currently dead, and the tests say so out loud, so that fixing it produces a visible
-    /// red test rather than a silent no-op.
+    /// <para>
+    /// This fixture used to assert that three hardcoded defName lists in <c>DetoxCycle</c> were
+    /// dead: it pinned the bug rather than the fix, deliberately, so that repairing it would show
+    /// up as a red test rather than as a silent no-op. That worked. The lists are gone, those tests
+    /// went red, and what is left here is their evidence rather than their subject.
+    /// </para>
+    /// <para>
+    /// The names are kept as literals in this file now, because they are historical: they are what
+    /// the mod used to look for, and the assertion is that the game has never declared any of them
+    /// as a <c>HediffDef</c>. The type restriction is the load-bearing part and has a test of its
+    /// own, since six of the eight withdrawal names DO exist as <c>ThoughtDef</c>s and an untyped
+    /// check would have reported the dead list as healthy.
+    /// </para>
     /// </remarks>
     [TestFixture]
     public class DefValidationTests
     {
-        private static List<string> ListField(string name)
+        /// <summary>
+        /// The defName lists this mod used to match hediffs against, all of them now deleted.
+        /// </summary>
+        private static readonly string[] RetiredLists =
         {
-            var field = typeof(DetoxCycle).GetField(name, BindingFlags.NonPublic | BindingFlags.Static);
-            Assert.That(field, Is.Not.Null, name + " was renamed or removed from DetoxCycle.");
-            return (List<string>)field.GetValue(null);
-        }
+            "DetoxifiableAddictions", "DetoxifiableWithdrawals", "NonDetoxifiableAddictions"
+        };
+
+        /// <summary>
+        /// The names the old addiction allow-list held, none of which has ever been a def.
+        /// </summary>
+        private static readonly string[] NamesTheOldListHeld =
+        {
+            "Addiction_Alcohol", "Addiction_Smokeleaf", "Addiction_Psychite", "Addiction_WakeUp",
+            "Addiction_GoJuice", "Addiction_Flake", "Addiction_Yayo", "Addiction_Beer",
+            "Addiction_Ambrosia"
+        };
+
+        /// <summary>
+        /// The names the old withdrawal allow-list held.
+        /// </summary>
+        private static readonly string[] WithdrawalNamesTheOldListHeld =
+        {
+            "AlcoholWithdrawal", "SmokeleafWithdrawal", "PsychiteWithdrawal", "WakeUpWithdrawal",
+            "GoJuiceWithdrawal", "FlakeWithdrawal", "YayoWithdrawal", "AmbrosiaWithdrawal"
+        };
 
         [Test]
         public void TheGameShipsHediffDefsAtAll()
@@ -38,24 +63,47 @@ namespace BiosculpterDetox.Tests
         }
 
         [Test]
-        public void NotOneDetoxifiableAddictionNameIsARealHediffDef()
+        public void NoneOfTheNamesTheOldAllowListHeldWasEverAHediffDef()
         {
-            // All nine entries are written Addiction_Alcohol. Every real addiction hediff is written
-            // the other way round, AlcoholAddiction: suffix, not prefix, and no underscore. So the
-            // list matches nothing and has never done anything.
+            // Kept after the list itself was deleted, because it is the evidence for the deletion
+            // rather than a description of it. All nine entries were written Addiction_Alcohol;
+            // every real addiction hediff is written the other way round, AlcoholAddiction, suffix
+            // rather than prefix and no underscore. The list matched nothing for the whole life of
+            // the mod, and every cure ran through the substring fallback beside it.
             var hediffs = GameDefs.OfType("HediffDef");
-            var live = ListField("DetoxifiableAddictions").Where(hediffs.Contains).ToList();
+            var live = NamesTheOldListHeld.Where(hediffs.Contains).ToList();
 
-            Assert.That(live, Is.Empty, "A name started matching. Update this test and issue #4.");
+            Assert.That(live, Is.Empty,
+                "One of the names the dead allow-list held now exists as a HediffDef, which would "
+                + "mean RimWorld renamed its addiction hediffs. Check the predicate still holds.");
         }
 
         [Test]
-        public void NotOneDetoxifiableWithdrawalNameIsARealHediffDef()
+        public void TheDefNameListsAreGoneAndMustStayGone()
+        {
+            // The fix for issues #4 and #5 was to stop matching defNames as strings at all. A
+            // reader adding an allow-list back would be reintroducing the whole defect class, so
+            // the absence is asserted rather than left to reviewer memory.
+            foreach (string name in RetiredLists)
+            {
+                Assert.That(
+                    typeof(DetoxCycle).GetField(name, BindingFlags.NonPublic | BindingFlags.Static
+                        | BindingFlags.Public | BindingFlags.Instance),
+                    Is.Null,
+                    name + " is back. Matching hediffs by defName is what issues #4 and #5 removed: "
+                    + "a defName is a namespace other mods write into, so a substring test over it "
+                    + "is unbounded, and an allow-list of exact names is dead the moment it is "
+                    + "spelled wrong, which is what happened here for a year.");
+            }
+        }
+
+        [Test]
+        public void NoneOfTheWithdrawalNamesWasEverAHediffDefEither()
         {
             var hediffs = GameDefs.OfType("HediffDef");
-            var live = ListField("DetoxifiableWithdrawals").Where(hediffs.Contains).ToList();
+            var live = WithdrawalNamesTheOldListHeld.Where(hediffs.Contains).ToList();
 
-            Assert.That(live, Is.Empty, "A name started matching. Update this test.");
+            Assert.That(live, Is.Empty, "A withdrawal name started existing as a HediffDef.");
         }
 
         [Test]
@@ -66,7 +114,7 @@ namespace BiosculpterDetox.Tests
             // ThoughtDefs. A validation test that compared against every defName rather than
             // against HediffDef would pass on this list and report the bug as healthy.
             var anyType = GameDefs.AnyType();
-            var withdrawals = ListField("DetoxifiableWithdrawals");
+            var withdrawals = WithdrawalNamesTheOldListHeld;
 
             var existSomewhere = withdrawals.Where(anyType.Contains).ToList();
             var existAsHediff = withdrawals.Where(GameDefs.OfType("HediffDef").Contains).ToList();
@@ -107,15 +155,22 @@ namespace BiosculpterDetox.Tests
         }
 
         [Test]
-        public void TheOnlyNonDetoxifiableAddictionIsRealAndIsCaughtByTheFallback()
+        public void LuciferiumIsExcludedByTheGamesOwnFlagRatherThanByItsName()
         {
-            // This one name does have to be right, because it is the exclusion that stops the mod
-            // curing Luciferium. Unlike the other two lists, it is live.
-            var nonDetoxifiable = ListField("NonDetoxifiableAddictions");
-
-            Assert.That(nonDetoxifiable, Is.EqualTo(new[] { "LuciferiumAddiction" }));
+            // The exclusion used to be the string "LuciferiumAddiction" in a deny-list. It is now
+            // everCurableByItem, which is what Ludeon sets on that def and what the vanilla
+            // biosculpter healing cycle gates on. This asserts the premise the new predicate rests
+            // on: that the shipped def really does declare itself incurable. If Ludeon ever drops
+            // the flag, the predicate silently starts curing luciferium and this is the test that
+            // says so.
             Assert.That(GameDefs.OfType("HediffDef"), Does.Contain("LuciferiumAddiction"));
-            Assert.That("LuciferiumAddiction".EndsWith("Addiction"), Is.True);
+
+            Assert.That(
+                GameDefs.DeclaresIncurable("LuciferiumAddiction"), Is.True,
+                "LuciferiumAddiction no longer sets everCurableByItem false, so the detox cycle "
+                + "will now cure it. That is a balance change two players have asked for and one "
+                + "has asked against, so it is a decision rather than a bug, but it must not "
+                + "happen by accident.");
         }
 
         [Test]

@@ -3,20 +3,18 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>desintoxicação</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Remove todos os vícios em drogas e efeitos de abstinência do ocupante. Este ciclo médico avançado usa tecnologia biosculptora para limpar o corpo de substâncias viciantes e redefinir dependências neuroquímicas.</BiosculpterDetox_CycleDescription>
-  
-  <!-- Cycle completion messages -->
-  <BiosculpterDetox_DetoxComplete>Desintoxicação completa!</BiosculpterDetox_DetoxComplete>
-  <BiosculpterDetox_NoAddictions>Nenhum vício encontrado</BiosculpterDetox_NoAddictions>
+  <BiosculpterDetox_CycleDescription>Remove todos os vícios e todas as tolerâncias a drogas do ocupante. A abstinência termina junto com o vício que a causa. Vícios permanentes como o luciferium não podem ser curados.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Tratamento de desintoxicação completo</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0} completou com sucesso o tratamento de desintoxicação na cápsula biosculptora. Todos os vícios em drogas e efeitos de abstinência foram removidos do sistema.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0} concluiu o tratamento de desintoxicação na cápsula de bioescultura. Todos os vícios e tolerâncias a drogas que podiam ser tratados foram removidos.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_Cured>Curado: {0}</BiosculpterDetox_Cured>
+  <BiosculpterDetox_NoConditionsLetterTitle>Desintoxicação concluída: nada a tratar</BiosculpterDetox_NoConditionsLetterTitle>
+  <BiosculpterDetox_NoConditionsLetterText>{0} concluiu o ciclo de desintoxicação, mas não tinha vícios nem tolerâncias a drogas para tratar. O ciclo não teve efeito.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
   <BiosculpterDetox_NoAddictionsToTreat>Nenhum vício para tratar</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Irá tratar: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_TreatingConditions>Tratando: {0}</BiosculpterDetox_TreatingConditions>
-  <BiosculpterDetox_NoConditionsToTreat>Nenhum vício detectado - o ciclo será concluído sem efeito</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Nenhum vício ou tolerância a drogas detectado. O ciclo será concluído sem efeito.</BiosculpterDetox_NoConditionsToTreat>
   
 </LanguageData>
