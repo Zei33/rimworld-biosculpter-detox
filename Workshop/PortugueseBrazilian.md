@@ -26,7 +26,7 @@ Curar um vício normalmente significa trancar um colono e esperar a abstinência
 [list]
 [*] Vícios permanentes não são tratados, a menos que você ative "Tratar vícios permanentes" nas opções do mod; essa opção vem desativada por padrão
 [*] O lucifério é o único vício permanente no jogo base
-[*] Ferimentos, partes do corpo ausentes e tudo que não seja dependência de drogas permanecem inalterados
+[*] Ferimentos, partes do corpo ausentes e tudo que não seja vício em drogas nem tolerância permanecem inalterados
 [/list]
 
 [h2]REQUISITOS[/h2]
