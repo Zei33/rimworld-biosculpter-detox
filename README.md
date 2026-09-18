@@ -10,7 +10,8 @@ out with every drug addiction and every drug tolerance removed.
 
 - Removes every drug addiction the game considers curable, vanilla or modded.
 - Removes every drug tolerance, which is what raises the risk of becoming addicted again.
-- Leaves permanent addictions alone. Luciferium is the vanilla example.
+- Leaves permanent addictions alone unless you turn that on in the mod options. Luciferium is the
+  vanilla example.
 
 Withdrawal is not removed, because withdrawal is not a separate condition. RimWorld models it as a
 stage of the addiction hediff, chosen from how long the pawn has gone without the drug, so curing
@@ -37,21 +38,29 @@ mods whose hediffs merely happen to be named like addictions are left alone.
 1. Build a biosculpter pod and complete the Bioregeneration research, both from Ideology.
 2. Select the pod and choose the detox cycle.
 3. Pick a pawn.
-4. The cycle takes 12 days.
+4. The cycle takes 12 days by default. Room cleanliness and biotuning change the time the pod
+   shows, as they do for every cycle.
 
 The cycle is offered for every pawn, like every other biosculpter cycle. A pawn with nothing to
 treat gets a disabled option saying so, rather than the option being hidden, which is how vanilla
 handles a cycle a pawn cannot use.
 
-The cycle description lists what the cycle would treat for the selected pawn before it starts, and
-the completion letter lists what was actually removed. A cycle that finds nothing says so.
+Once a pod is biotuned to a pawn, which any completed cycle does, the cycle description lists what
+the cycle would treat for that pawn. The completion letter lists what was actually removed. A cycle
+that finds nothing says so.
+
+## Settings
+
+Options > Mod options > Biosculpter Detox has two settings.
+
+- Treat permanent addictions is off by default. Turn it on to let the cycle remove luciferium, and
+  any modded addiction the game marks as permanent.
+- Cycle duration is 12 days by default and runs from 1 to 30. A change reaches pods already built
+  when the window closes. A pawn already in a pod keeps the length their cycle started with.
 
 ## Limitations
 
-- The duration is fixed at 12 days. There is no setting for it and no scaling by how bad the
-  addiction is.
-- There is no mod settings screen at all, so there is nowhere to make the Luciferium exclusion or
-  the duration configurable. Both have been asked for.
+- There is no scaling by how bad the addiction is. Every cycle runs for the set duration.
 - Removing the mod while a pawn is inside a pod running the detox cycle leaves the pod holding a
   cycle it can no longer resolve. Finish or cancel a cycle before removing the mod.
 

@@ -166,6 +166,66 @@ namespace BiosculpterDetox.Tests
             return Regex.Matches(value, "\\{[0-9]+\\}").Cast<Match>().Select(m => m.Value);
         }
 
+        [Test]
+        public void TheRussianCaseTableDeclinesTheCycleLabelTheWayTheGameLooksItUp()
+        {
+            // Vanilla's Russian pod strings put the cycle label through {lookup: {0}; Case; 1}, the
+            // genitive, in the cycle button, the enter option, the entering message and the
+            // refusal: "Начать цикл детоксикации". A label missing from the table is printed as it
+            // is, in the nominative, which is ungrammatical in all four. The game ships no entry
+            // for this mod's label, so the mod supplies one, and this holds that entry to the label
+            // it declines: rename either and the table silently stops matching.
+            string directory = Path.Combine(RepoRoot(), "1.6", "Languages", "Russian", "WordInfo");
+
+            // Lowercase, and compared by exact name rather than File.Exists, which ignores case on
+            // this machine. LanguageWordInfo.GetLookupTable lowercases the table name before it
+            // builds the file name, and a mod folder is a plain filesystem lookup, so "Case.txt"
+            // would be missed on a case-sensitive filesystem.
+            Assert.That(
+                Directory.GetFiles(directory).Select(Path.GetFileName),
+                Is.EquivalentTo(new[] { "case.txt" }));
+
+            // Parsed the way LanguageWordInfo.RegisterLut does: GenText.LinesFromString drops
+            // blank and "//" lines and cuts a trailing comment, then TryGetSeparatedValues splits
+            // on ';' and trims, and the first form lowercased is the key.
+            var table = new Dictionary<string, string[]>();
+
+            foreach (string raw in File.ReadAllText(Path.Combine(directory, "case.txt"))
+                         .Split(new[] { "\r\n", "\n" }, System.StringSplitOptions.RemoveEmptyEntries))
+            {
+                string line = raw.Trim();
+
+                if (line.StartsWith("//"))
+                {
+                    continue;
+                }
+
+                line = line.Split(new[] { "//" }, System.StringSplitOptions.None)[0];
+
+                if (line.Length == 0)
+                {
+                    continue;
+                }
+
+                Assert.That(line, Does.Contain(";"), "The game fails to parse this line: " + line);
+
+                string[] forms = line.Split(new[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries)
+                    .Select(form => form.Trim())
+                    .ToArray();
+
+                table[forms[0].ToLower()] = forms;
+            }
+
+            string label = Values("Russian")["BiosculpterDetox_CycleLabel"].ToLower().Trim();
+
+            Assert.That(table.ContainsKey(label), Is.True,
+                "The Russian case table has no entry for the cycle label \"" + label + "\".");
+            Assert.That(table[label].Length, Is.EqualTo(6),
+                "A case entry is nominative, genitive, dative, accusative, instrumental, prepositional.");
+            Assert.That(table[label][1], Is.Not.EqualTo(table[label][0]),
+                "The genitive, the form the pod's strings ask for, is the nominative again.");
+        }
+
         private static IEnumerable<string> Keys(string language)
         {
             return XDocument.Load(KeyedPath(language)).Root.Elements().Select(e => e.Name.LocalName);

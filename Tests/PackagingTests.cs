@@ -103,7 +103,11 @@ namespace BiosculpterDetox.Tests
         {
             string commands = Commands();
 
-            Assert.That(commands, Does.Contain("find release/1.6/Languages -type f ! -name '*.xml' -delete"));
+            // The Languages sweep must spare the WordInfo tables, which the game reads too. A sweep
+            // of everything but XML would delete the Russian case.txt from the release while it
+            // stayed in the repo, so the fault would only show in game.
+            Assert.That(commands, Does.Contain(
+                "find release/1.6/Languages -type f ! -name '*.xml' ! -path '*/WordInfo/*.txt' -delete"));
             Assert.That(commands, Does.Contain("find release/1.6/Textures -type f ! -name '*.png' -delete"));
         }
 

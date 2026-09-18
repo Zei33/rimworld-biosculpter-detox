@@ -10,12 +10,12 @@
   <BiosculpterDetox_LetterText>{0}はバイオスカルプターポッドでのデトックス治療を完了しました。治療可能な薬物依存症と薬物耐性はすべて取り除かれました。</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>治療済み：{0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>デトックス完了：治療対象なし</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0}はデトックス周期を完了しましたが、治療対象となる薬物依存症も薬物耐性もありませんでした。この周期に効果はありませんでした。</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0}はデトックスサイクルを完了しましたが、このサイクルで治療できるものがなかったため、効果はありませんでした。</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>治療する依存症がありません</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>このサイクルで治療できるものがありません</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>治療対象：{0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>依存症も薬物耐性も検出されませんでした。この周期は効果なく終了します。</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>このサイクルで治療できるものがないため、開始できません。</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>ルシフェリウムのような永久的な依存症も治療します。</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>ルシフェリウムのような永久的な依存症は治療しません。</BiosculpterDetox_PermanentAddictionsSkipped>
   

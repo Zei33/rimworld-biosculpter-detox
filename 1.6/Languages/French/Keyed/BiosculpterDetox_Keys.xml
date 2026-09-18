@@ -10,12 +10,12 @@
   <BiosculpterDetox_LetterText>{0} a terminé sa désintoxication dans la capsule de biosculptage. Toutes les addictions et toutes les accoutumances aux drogues qui pouvaient être traitées ont été supprimées.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Soigné : {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Désintoxication terminée : rien à traiter</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0} a terminé le cycle de désintoxication, mais n'avait aucune addiction ni accoutumance aux drogues à traiter. Le cycle n'a eu aucun effet.</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0} a terminé le cycle de désintoxication, mais n'avait rien que celui-ci puisse traiter. Le cycle n'a eu aucun effet.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>Aucune addiction à traiter</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>Rien que ce cycle puisse traiter</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Traitera : {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>Aucune addiction ni accoutumance aux drogues détectée. Le cycle se terminera sans effet.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Il n'y a rien que ce cycle puisse traiter, il ne peut donc pas être démarré.</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>Les addictions permanentes comme le luciferium seront traitées.</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>Les addictions permanentes comme le luciferium ne seront pas traitées.</BiosculpterDetox_PermanentAddictionsSkipped>
   

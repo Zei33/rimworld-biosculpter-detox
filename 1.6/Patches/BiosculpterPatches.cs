@@ -236,9 +236,20 @@ namespace BiosculpterDetox.Patches
         /// </para>
         /// <para>
         /// <c>CannotUseNowPawnCycleReason</c> is the hook vanilla built for exactly this. It is
-        /// called with the pawn at the point the decision is made, needs no occupant, and feeds all
-        /// three consumers at once: the gizmo's enabled state, the float menu and
-        /// <c>CanUseNow</c>. Vanilla gates its own age-reversal cycle from inside it.
+        /// called with the pawn at the point the decision is made, needs no occupant, and is what
+        /// every per-pawn question about a cycle asks: the pawn's row in the menu the cycle button
+        /// opens, the pod's right-click menu, the carry-to-pod menu, and <c>PawnCanUseNow</c>,
+        /// whose only caller is the automatic age reversal job. Vanilla gates its own age reversal
+        /// cycle from inside it.
+        /// </para>
+        /// <para>
+        /// It does NOT decide whether the cycle button is enabled, and an earlier version of this
+        /// comment said it did. The button asks whether any pawn has a row, and a refused row is
+        /// still a row, so this reason reaches the row and never the button. On an unbiotuned pod
+        /// that is harmless, because the button opens the menu and the row is greyed there. On a
+        /// biotuned pod it is not: the button skips the menu and invokes the one row's action,
+        /// which is null for a refused row. <see cref="CompBiosculpterPod_CompGetGizmosExtra_Patch"/>
+        /// closes that.
         /// </para>
         /// <para>
         /// The cycle is identified by its component type, never by a label. That is the general
@@ -318,6 +329,91 @@ namespace BiosculpterDetox.Patches
                 {
                     ___currentCycleKey = CycleKey;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Disables a biotuned pod's detox button when the pawn it would act on is refused.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Without this, every successful detox leaves a trap behind it. The cycle biotunes the pod
+        /// to the pawn it has just treated, that pawn now has nothing to treat, and vanilla keeps
+        /// "Begin detox cycle (pawn)" enabled because it counts the refused row as eligible. The
+        /// click then invokes that row's null action and throws. Confirmed in game on 2026-09-18.
+        /// The reasoning, and every decision, lives in <see cref="DetoxCommandGate"/>; this class
+        /// only gathers what the decisions need.
+        /// </para>
+        /// <para>
+        /// Detox only. Vanilla's four cycles have the same latent crash, for a biotuned child and
+        /// the age reversal cycle or a biotuned pawn with no path, but that is vanilla's defect,
+        /// every player has it with or without this mod, and a patch that greyed vanilla's own
+        /// buttons would put this mod's name on a change nobody installed it for.
+        /// </para>
+        /// <para>
+        /// Declared last on purpose, and it has to stay last. <c>PatchAll</c> applies patch classes
+        /// in the order they are declared, and a class that throws stops every class after it.
+        /// This one has the most ways to throw at patch time (a private field injected by name, a
+        /// replaced result whose type must match, a target that is an override), and losing it
+        /// costs only this button. Losing the migration above it would trap an occupant, so a
+        /// future break here must not take that with it. <c>PatchTargetTests</c> pins the order.
+        /// </para>
+        /// <para>
+        /// The target is an iterator, so the original returns before any of its body runs. The
+        /// postfix therefore replaces <c>__result</c> with a wrapper and decides nothing itself.
+        /// Every read it does make (the cycle list, each cycle's icon) is one vanilla makes on the
+        /// same objects a moment later, so it adds no way to fail that vanilla does not have.
+        /// </para>
+        /// <para>
+        /// <c>___biotunedTo</c> is read when the postfix runs, which is when
+        /// <c>ThingWithComps.GetGizmos</c> reaches this comp, immediately before it walks the
+        /// result. The gizmo grid builds its list once per frame and reuses those objects for every
+        /// event in the frame, and ticks run in Unity's update rather than between those events, so
+        /// the reason decided here is the one the click would meet.
+        /// </para>
+        /// </remarks>
+        [HarmonyPatch(typeof(CompBiosculpterPod), nameof(CompBiosculpterPod.CompGetGizmosExtra))]
+        public static class CompBiosculpterPod_CompGetGizmosExtra_Patch
+        {
+            /// <summary>
+            /// Wraps the pod's gizmos so that a refused detox button arrives disabled.
+            /// </summary>
+            /// <param name="__result">The pod's gizmos, replaced by a wrapper over them.</param>
+            /// <param name="__instance">The pod's own biosculpter component.</param>
+            /// <param name="___biotunedTo">The pawn the pod is biotuned to, or <c>null</c>.</param>
+            public static void Postfix(
+                ref IEnumerable<Gizmo> __result, CompBiosculpterPod __instance, Pawn ___biotunedTo)
+            {
+                if (__result == null)
+                {
+                    return;
+                }
+
+                var detox = DetoxCommandGate.SplitCycles(
+                    __instance.AvailableCycles,
+                    cycle => cycle is CompBiosculpterPod_DetoxCycle,
+                    cycle => cycle.Props.Icon,
+                    out List<object> otherCycleIcons) as CompBiosculpterPod_DetoxCycle;
+
+                if (detox == null)
+                {
+                    return;
+                }
+
+                CompBiosculpterPod pod = __instance;
+                Pawn pawn = ___biotunedTo;
+
+                __result = DetoxCommandGate.DisableRefusedDetoxCommand(
+                    __result,
+                    detox.Props.Icon,
+                    otherCycleIcons,
+                    () => DetoxCommandGate.BiotunedRefusal(
+                        pawn != null,
+                        pawn != null && !pawn.Dead && pawn.Spawned && pawn.Map == pod.parent.Map,
+                        // The same two calls, in the same order, that vanilla's
+                        // SelectPawnCycleOption makes to build this pawn's row.
+                        () => pod.CannotUseNowPawnReason(pawn)
+                              ?? pod.CannotUseNowPawnCycleReason(pawn, detox, checkIngredients: false)));
             }
         }
     }

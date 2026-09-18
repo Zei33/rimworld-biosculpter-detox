@@ -39,8 +39,11 @@ cp -r 1.6/Textures release/1.6/Textures
 # that line across without checking which kind this mod has.
 
 # Both Languages and Textures carry a developer README that has been shipping to
-# subscribers. Keep only what the game loads.
-find release/1.6/Languages -type f ! -name '*.xml' -delete
+# subscribers. Keep only what the game loads, which in Languages is the Keyed XML
+# and the WordInfo word tables. The Russian case.txt declines the cycle label for
+# the pod's own strings; LanguageWordInfo.RegisterLut reads it from every mod's
+# language folder, and without it Russian shows the label undeclined.
+find release/1.6/Languages -type f ! -name '*.xml' ! -path '*/WordInfo/*.txt' -delete
 find release/1.6/Textures -type f ! -name '*.png' -delete
 
 rm -Rf "${RimWorldDir}/Mods/BiosculpterDetox"

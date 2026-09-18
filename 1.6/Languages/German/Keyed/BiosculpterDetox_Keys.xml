@@ -10,12 +10,12 @@
   <BiosculpterDetox_LetterText>{0} hat die Entgiftung in der Bioformerkapsel abgeschlossen. Jede behandelbare Drogensucht und Drogentoleranz wurde entfernt.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Geheilt: {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Entgiftung abgeschlossen: nichts zu behandeln</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0} hat den Entgiftungszyklus abgeschlossen, hatte aber weder Drogensucht noch Drogentoleranz zu behandeln. Der Zyklus blieb ohne Wirkung.</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0} hat den Entgiftungszyklus abgeschlossen, hatte aber nichts, was der Zyklus behandeln konnte. Der Zyklus blieb ohne Wirkung.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>Keine Sucht zu behandeln</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>Nichts, was dieser Zyklus behandeln kann</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Wird behandeln: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>Keine Sucht und keine Drogentoleranz festgestellt. Der Zyklus wird ohne Wirkung enden.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Es gibt nichts, was dieser Zyklus behandeln kann, daher kann er nicht gestartet werden.</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>Dauerhafte Süchte wie Luziferium werden behandelt.</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>Dauerhafte Süchte wie Luziferium werden nicht behandelt.</BiosculpterDetox_PermanentAddictionsSkipped>
   

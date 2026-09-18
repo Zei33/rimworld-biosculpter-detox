@@ -1,0 +1,4 @@
+// Declension of this mod's cycle label (BiosculpterDetox_CycleLabel), for the pod's own
+// {lookup: {0}; Case; 1} in the cycle button, the enter option and the refusal.
+// Forms: nominative; genitive; dative; accusative; instrumental; prepositional.
+детоксикация; детоксикации; детоксикации; детоксикацию; детоксикацией; детоксикации

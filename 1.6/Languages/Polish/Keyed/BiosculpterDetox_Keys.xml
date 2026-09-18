@@ -7,15 +7,15 @@
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Leczenie detoksykacyjne zakończone</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0} ukończył kurację detoksykacyjną w kapsule biorzeźbiarskiej. Usunięto wszystkie uzależnienia i tolerancje na narkotyki, które dało się wyleczyć.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0}: zakończono kurację detoksykacyjną w kapsule biorzeźbiarskiej. Usunięto wszystkie uzależnienia i tolerancje na narkotyki, które dało się wyleczyć.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Wyleczono: {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Detoks zakończony: nie było czego leczyć</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0} ukończył cykl detoksykacji, ale nie miał żadnych uzależnień ani tolerancji na narkotyki do wyleczenia. Cykl nie przyniósł żadnego efektu.</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0}: zakończono cykl detoksykacji, ale nie było nic, co ten cykl mógłby wyleczyć. Cykl nie przyniósł żadnego efektu.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>Brak uzależnień do leczenia</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>Nie ma nic, co ten cykl mógłby wyleczyć</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Będzie leczyć: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>Nie wykryto uzależnień ani tolerancji na narkotyki. Cykl zakończy się bez efektu.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Nie ma nic, co ten cykl mógłby wyleczyć, więc nie można go rozpocząć.</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>Trwałe uzależnienia, takie jak lucyferium, będą leczone.</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>Trwałe uzależnienia, takie jak lucyferium, nie będą leczone.</BiosculpterDetox_PermanentAddictionsSkipped>
   

@@ -10,12 +10,12 @@
   <BiosculpterDetox_LetterText>{0}已在生物塑造舱中完成戒毒治疗。所有可治疗的药物成瘾与药物耐受性均已清除。</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>已治愈：{0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>戒毒完成：无需治疗</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0}已完成戒毒周期，但没有需要治疗的药物成瘾或药物耐受性。本次周期没有产生任何效果。</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0}已完成戒毒周期，但没有本周期能够治疗的健康状况。本次周期没有产生任何效果。</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>没有成瘾需要治疗</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>没有本周期能够治疗的健康状况</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>将治疗：{0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>未检测到成瘾或药物耐受性。本次周期将不会产生任何效果。</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>没有本周期能够治疗的健康状况，因此无法启动。</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>永久性成瘾（如魔鬼素）将会被治疗。</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>永久性成瘾（如魔鬼素）将不会被治疗。</BiosculpterDetox_PermanentAddictionsSkipped>
   

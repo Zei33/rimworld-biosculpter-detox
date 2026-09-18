@@ -10,12 +10,12 @@
   <BiosculpterDetox_LetterText>{0} has completed detox treatment in the biosculpter pod. Every drug addiction and drug tolerance that could be treated has been removed.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Cured: {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Detox Complete: Nothing to Treat</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0} has completed the detox cycle, but had no drug addictions or drug tolerances to treat. The cycle had no effect.</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0} has completed the detox cycle, but had nothing the cycle could treat. The cycle had no effect.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>No addictions to treat</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>Nothing this cycle can treat</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Will treat: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>No addictions or drug tolerances detected. The cycle will complete without effect.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>There is nothing this cycle can treat, so it cannot be started.</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>Permanent addictions such as luciferium will be treated.</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>Permanent addictions such as luciferium will not be treated.</BiosculpterDetox_PermanentAddictionsSkipped>
   

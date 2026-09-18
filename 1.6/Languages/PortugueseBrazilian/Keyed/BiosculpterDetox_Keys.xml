@@ -10,12 +10,12 @@
   <BiosculpterDetox_LetterText>{0} concluiu o tratamento de desintoxicação na cápsula de bioescultura. Todos os vícios e tolerâncias a drogas que podiam ser tratados foram removidos.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Curado: {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Desintoxicação concluída: nada a tratar</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0} concluiu o ciclo de desintoxicação, mas não tinha vícios nem tolerâncias a drogas para tratar. O ciclo não teve efeito.</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0} concluiu o ciclo de desintoxicação, mas não tinha nada que o ciclo pudesse tratar. O ciclo não teve efeito.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
-  <BiosculpterDetox_NoAddictionsToTreat>Nenhum vício para tratar</BiosculpterDetox_NoAddictionsToTreat>
+  <BiosculpterDetox_NoAddictionsToTreat>Nada que este ciclo possa tratar</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Irá tratar: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>Nenhum vício ou tolerância a drogas detectado. O ciclo será concluído sem efeito.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Não há nada que este ciclo possa tratar, então ele não pode ser iniciado.</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>Vícios permanentes como o lucifério serão tratados.</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>Vícios permanentes como o lucifério não serão tratados.</BiosculpterDetox_PermanentAddictionsSkipped>
   

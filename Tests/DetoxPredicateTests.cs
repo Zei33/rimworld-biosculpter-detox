@@ -177,15 +177,18 @@ namespace BiosculpterDetox.Tests
         [Test]
         public void TheSettingCannotReachABiotechChemicalDependency()
         {
-            // The one that kills a pawn if it is ever wrong, so it is asserted directly rather than
-            // left to follow from the test above.
+            // The case with the most at stake, so it is asserted directly rather than left to
+            // follow from the test above.
             //
             // A gene-driven chemical dependency is excluded twice over in the shipped game: it sets
             // everCurableByItem false AND its hediff class is Hediff_ChemicalDependency, which is a
             // SIBLING of Hediff_Addiction under HediffWithComps rather than a subclass of it. The
             // setting relaxes only the flag, so the type test still carries the exclusion on its
-            // own. Removing one of these is fatal: the gene re-adds it and the pawn dies without
-            // the drug.
+            // own. Removing one would not kill the pawn, and nothing would put it back:
+            // Gene_ChemicalDependency has no tick and recreates the hediff only when the gene is
+            // added, when the pawn next takes the drug, or when the gene tracker is reset. So a
+            // wrongful removal silently suspends the dependency until the next dose, and the pawn
+            // keeps the gene's metabolism bonus without its cost.
             var dependency = new Hediff_ChemicalDependency
             {
                 def = HediffDef("GeneticDrugNeed", curable: false)
@@ -193,11 +196,13 @@ namespace BiosculpterDetox.Tests
 
             Assert.That(
                 DetoxCycle.IsCurableAddiction(dependency, cureIncurableAddictions: true), Is.False,
-                "A chemical dependency became curable. This kills pawns.");
+                "A chemical dependency became curable. The cycle would silently suspend a "
+                + "genetic dependency until the pawn's next dose.");
             Assert.That(
                 DetoxCycle.IsDetoxifiable(dependency, NoChemicals(), cureIncurableAddictions: true),
                 Is.False,
-                "A chemical dependency became detoxifiable. This kills pawns.");
+                "A chemical dependency became detoxifiable. The cycle would silently suspend a "
+                + "genetic dependency until the pawn's next dose.");
         }
 
         [Test]
@@ -205,12 +210,52 @@ namespace BiosculpterDetox.Tests
         {
             // The structural fact the test above rests on, asserted so that it fails loudly if a
             // future RimWorld ever reparents the class. If this becomes a subclass, the type test
-            // stops excluding chemical dependencies and the setting above becomes lethal.
+            // stops excluding chemical dependencies, and turning the setting on would let the cycle
+            // strip them.
             Assert.That(
                 typeof(Hediff_Addiction).IsAssignableFrom(typeof(Hediff_ChemicalDependency)),
                 Is.False,
                 "Hediff_ChemicalDependency now derives from Hediff_Addiction. The permanent "
                 + "addiction setting must gain an explicit exclusion for it immediately.");
+        }
+
+        [Test]
+        public void TheDependencyGeneHasNoTickThatCouldRecreateTheHediff()
+        {
+            // The premise under every account of what a wrongful removal would do. The gene
+            // recreates the hediff only from PostAdd and Reset, which run when the gene is added,
+            // when the pawn ingests that drug and when the gene tracker is reset, so a removal is
+            // not undone on tick and does not kill the pawn. An earlier version of the comments
+            // here said the gene re-adds it and the pawn dies; that was never true. If a future
+            // RimWorld gives the gene a tick of its own, this fails, and what needs re-reading is
+            // the comment on DetoxCycle.IsCurableAddiction and Tests/README.md check 12.
+            const System.Reflection.BindingFlags publicInstance =
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
+            System.Type gene = typeof(Gene_ChemicalDependency);
+
+            System.Reflection.MethodInfo reset =
+                gene.GetMethod("Reset", publicInstance, null, System.Type.EmptyTypes, null);
+            System.Reflection.MethodInfo tick =
+                gene.GetMethod("Tick", publicInstance, null, System.Type.EmptyTypes, null);
+            System.Reflection.MethodInfo tickInterval =
+                gene.GetMethod("TickInterval", publicInstance, null, new[] { typeof(int) }, null);
+
+            // The control. Reset is overridden, so a DeclaringType test can see an override on
+            // this type; without it, two passes below could mean the lookup is broken.
+            Assert.That(reset, Is.Not.Null, "Gene_ChemicalDependency.Reset is gone.");
+            Assert.That(reset.DeclaringType, Is.EqualTo(gene),
+                "Gene_ChemicalDependency no longer overrides Reset, so this test cannot tell an "
+                + "override from an inherited method.");
+
+            Assert.That(tick, Is.Not.Null, "Gene.Tick() is gone, so this test checks nothing.");
+            Assert.That(tick.DeclaringType, Is.EqualTo(typeof(Gene)),
+                "Gene_ChemicalDependency now overrides Tick. A removed dependency may now come "
+                + "back on its own; re-read the comments that say it does not.");
+            Assert.That(tickInterval, Is.Not.Null,
+                "Gene.TickInterval(int) is gone, so this test checks nothing.");
+            Assert.That(tickInterval.DeclaringType, Is.EqualTo(typeof(Gene)),
+                "Gene_ChemicalDependency now overrides TickInterval. A removed dependency may now "
+                + "come back on its own; re-read the comments that say it does not.");
         }
 
         [Test]

@@ -61,21 +61,29 @@ namespace BiosculpterDetox.Core
         /// </para>
         /// <para>
         /// The pair is load-bearing and neither half is redundant. <c>everCurableByItem</c> is a
-        /// general medical flag, not a drug flag: fourteen of the fifteen shipped defs that set it
-        /// false have nothing to do with drugs, so it is only safe ANDed with the type test.
-        /// And the type test alone would sweep up Biotech's <c>Hediff_ChemicalDependency</c>, which
-        /// carries a <c>ChemicalDef</c> just like an addiction does; removing that one is fatal,
-        /// because the gene re-adds it and the pawn dies without the drug. It happens to derive
-        /// from a different base AND to set the flag false, so this pair excludes it twice.
+        /// general medical flag, not a drug flag: it defaults to true on every hediff, and fourteen
+        /// of the fifteen shipped defs that set it false have nothing to do with drugs, so it is only
+        /// safe ANDed with the type test. The type test alone would cure luciferium, the one shipped
+        /// <c>Hediff_Addiction</c> that sets the flag false, and keeping luciferium out is the job
+        /// the flag does here. Biotech's <c>Hediff_ChemicalDependency</c> carries a
+        /// <c>ChemicalDef</c> just as an addiction does, but neither half admits it: it derives from
+        /// <c>HediffWithComps</c> beside <c>Hediff_Addiction</c> rather than from it, AND it sets the
+        /// flag false, so this pair excludes it twice.
         /// </para>
         /// <para>
         /// The setting relaxes the flag and nothing else, which is what makes it safe. Of the
         /// fifteen hediffs the shipped game declares incurable, exactly one is an
         /// <c>Hediff_Addiction</c>, and it is luciferium; the other fourteen are excluded by the
         /// type test whatever the setting says. Biotech's chemical dependency is among those
-        /// fourteen, and it is the one that must never be removed, because the gene re-adds it and
-        /// the pawn dies without the drug. It is a sibling of <c>Hediff_Addiction</c> rather than a
-        /// subclass, so the type test alone carries that exclusion and the setting cannot reach it.
+        /// fourteen, and it is the one that most needs to stay excluded. Removing it would not kill
+        /// the pawn, and nothing would put it back: <c>Gene_ChemicalDependency</c> has no tick, and
+        /// recreates the hediff only from <c>PostAdd</c> and <c>Reset</c>, which run when the gene
+        /// is added, when the pawn ingests that drug, and when the gene tracker is reset. A
+        /// wrongful removal would therefore silently suspend a condition the game calls incurable:
+        /// no deficiency, no mood penalty and no drug-seeking until the next dose, while the pawn
+        /// keeps the metabolic efficiency the gene grants in exchange. It is a sibling of
+        /// <c>Hediff_Addiction</c> rather than a subclass, so the type test alone carries that
+        /// exclusion and the setting cannot reach it.
         /// </para>
         /// <para>
         /// The toggle is therefore described to the player in terms of permanent addictions rather
@@ -224,34 +232,85 @@ namespace BiosculpterDetox.Core
         /// </summary>
         /// <param name="pawn">The pawn to analyse.</param>
         /// <returns>The distinct labels, in the order the hediffs appear on the pawn.</returns>
+        /// <remarks>
+        /// The labels come from <see cref="ConditionLabels"/>, which is also where the completion
+        /// letter's list comes from, so the preview and the letter name each condition the same way.
+        /// </remarks>
         public static List<string> GetDetoxifiableConditionNames(Pawn pawn)
         {
-            var names = new List<string>();
+            return ConditionLabels(
+                DetoxifiableConditions(pawn, AllChemicals(), CureIncurableAddictions()));
+        }
 
-            foreach (Hediff hediff in
-                     DetoxifiableConditions(pawn, AllChemicals(), CureIncurableAddictions()))
+        /// <summary>
+        /// Gets the names to show the player for a set of conditions this cycle treats.
+        /// </summary>
+        /// <param name="hediffs">The conditions, in the order they should be named.</param>
+        /// <returns>
+        /// One capitalised name per distinct condition, in the order first seen. Empty when there is
+        /// nothing to name.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The "Will treat" preview and the "Cured" letter both build their lists here, so they
+        /// cannot name the same condition two different ways. Each used to read
+        /// <c>Hediff.LabelCap</c>, which appends the hediff's live bracket: an addiction's recovery
+        /// percentage, or a tolerance's stage word. Both move on their own while the pawn waits to
+        /// go in, so a tolerance previewed as "(large)" could be reported as "(small)".
+        /// </para>
+        /// <para>
+        /// The def label is what vanilla shows for the same job. <c>HealthUtility.Cure</c>, which
+        /// <see cref="PerformDetox"/> calls for every removal, builds its own message from
+        /// <c>hediff.def.label</c>. The def label is also the same on either side of the cure, and
+        /// it belongs to the def alone, so a test can reach it without a pawn.
+        /// <c>Hediff.LabelBaseCap</c> would not do instead: <c>HediffWithComps</c>, the class of
+        /// every shipped tolerance, prefixes it with its comps' labels.
+        /// </para>
+        /// <para>
+        /// A def with no label is named by its defName rather than dropped. A removed condition has
+        /// to appear in the letter, and an empty entry would read as a gap in the list.
+        /// </para>
+        /// </remarks>
+        public static List<string> ConditionLabels(IEnumerable<Hediff> hediffs)
+        {
+            var labels = new List<string>();
+
+            if (hediffs == null)
             {
-                string label = hediff.LabelCap;
+                return labels;
+            }
 
-                if (string.IsNullOrEmpty(label))
+            foreach (Hediff hediff in hediffs)
+            {
+                if (hediff?.def == null)
                 {
-                    label = hediff.def.LabelCap;
+                    continue;
                 }
 
-                if (!names.Contains(label))
+                string label = hediff.def.LabelCap;
+
+                if (label.NullOrEmpty())
                 {
-                    names.Add(label);
+                    label = hediff.def.defName;
+                }
+
+                if (!labels.Contains(label))
+                {
+                    labels.Add(label);
                 }
             }
 
-            return names;
+            return labels;
         }
 
         /// <summary>
         /// Removes every treatable condition from a pawn.
         /// </summary>
         /// <param name="pawn">The pawn undergoing treatment.</param>
-        /// <returns>The labels of what was removed, which is empty when nothing was.</returns>
+        /// <returns>
+        /// The names of what was removed, one per distinct condition, from
+        /// <see cref="ConditionLabels"/>. Empty when nothing was removed.
+        /// </returns>
         /// <remarks>
         /// <para>
         /// This reports what it did and says nothing to the player. All feedback belongs to the
@@ -285,13 +344,13 @@ namespace BiosculpterDetox.Core
         /// </remarks>
         public static List<string> PerformDetox(Pawn pawn)
         {
-            var removed = new List<string>();
-
             if (pawn?.health?.hediffSet == null)
             {
                 Log.Warning("[BiosculpterDetox] Attempted to detox a null pawn or a pawn with no health tracker.");
-                return removed;
+                return new List<string>();
             }
+
+            var cured = new List<Hediff>();
 
             foreach (Hediff hediff in
                      DetoxifiableConditions(pawn, AllChemicals(), CureIncurableAddictions()))
@@ -304,12 +363,11 @@ namespace BiosculpterDetox.Core
                     continue;
                 }
 
-                string label = hediff.LabelCap;
                 HealthUtility.Cure(hediff);
-                removed.Add(label);
+                cured.Add(hediff);
             }
 
-            return removed;
+            return ConditionLabels(cured);
         }
 
         /// <summary>

@@ -54,6 +54,14 @@ namespace BiosculpterDetox.Core
         /// A mote could be thrown from the pod, which is spawned throughout, but the letter already
         /// covers the feedback and a mote on the pod is not obviously about the pawn.
         /// </para>
+        /// <para>
+        /// The nothing-removed letter is rare now that the gate refuses a pawn with nothing to
+        /// treat. It is reached when everything treatable went away between the order and the end
+        /// of the cycle, most plausibly because the player turned the permanent addiction option
+        /// off while a pawn whose only addiction was luciferium was inside, since the setting is
+        /// read at completion. That is why its text says the pawn had nothing the cycle could
+        /// treat rather than naming addictions: the luciferium need is still there.
+        /// </para>
         /// </remarks>
         public override void CycleCompleted(Pawn occupant)
         {
@@ -110,6 +118,13 @@ namespace BiosculpterDetox.Core
         /// when a pod spawns, so a description that named the current policy would go stale the
         /// moment the player changed the setting, and would keep claiming the opposite of what the
         /// cycle now does until the next map load. This method runs every time the player looks.
+        /// </para>
+        /// <para>
+        /// With nothing on the list, the line says the cycle cannot be started, because it cannot:
+        /// <see cref="CanUseOn"/> asks the same question of the same predicate and the settings
+        /// read at the same moment, and the <c>CannotUseNowPawnCycleReason</c> patch refuses on
+        /// its answer. The line used to promise a cycle that would complete without effect, which
+        /// is a cycle that gate now refuses to start.
         /// </para>
         /// </remarks>
         public override string Description(Pawn tunedFor)
