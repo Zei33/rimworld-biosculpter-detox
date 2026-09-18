@@ -7,7 +7,7 @@ Curar um vício normalmente significa trancar um colono e esperar a abstinência
 [h2]RECURSOS PRINCIPAIS[/h2]
 [list]
 [*] Adiciona um ciclo de desintoxicação a todo bioescultor
-[*] Cura vícios em drogas, inclusive de outros mods que sigam a nomenclatura do jogo base
+[*] Cura vícios em drogas, inclusive os adicionados por outros mods
 [*] Limpa as tolerâncias ao mesmo tempo, então a próxima dose começa do zero
 [*] Envia uma carta com o nome do colono quando o ciclo termina
 [/list]
@@ -16,14 +16,16 @@ Curar um vício normalmente significa trancar um colono e esperar a abstinência
 [list]
 [*] Fica disponível assim que você pesquisar bioregeneração
 [*] Coloque o colono no bioescultor e escolha o ciclo de desintoxicação
-[*] O ciclo leva 12 dias, mais que a reversão de idade com 8 e menos que a bioregeneração com 25
+[*] O ciclo leva 12 dias por padrão, e você pode ajustar essa duração para qualquer valor de 1 a 30 dias nas opções do mod
+[*] Para efeito de comparação, a reversão de idade leva 8 dias e a bioregeneração, 25 dias
+[*] Um ciclo já iniciado mantém a duração com que começou
 [*] O colono sai sem os vícios e sem as tolerâncias
 [/list]
 
 [h2]O QUE NÃO É TRATADO[/h2]
 [list]
-[*] O vício em lucifério nunca é removido, porque os mecanitas não podem ser retirados
-[*] A tolerância ao lucifério fica intacta pelo mesmo motivo
+[*] Vícios permanentes não são tratados, a menos que você ative "Tratar vícios permanentes" nas opções do mod; essa opção vem desativada por padrão
+[*] O lucifério é o único vício permanente no jogo base
 [*] Ferimentos, partes do corpo ausentes e tudo que não seja dependência de drogas permanecem inalterados
 [/list]
 
@@ -48,7 +50,7 @@ Confira meus outros mods:
 [h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3538863870]Melhoria Simples[/url][/h3]
 Adiciona um trabalho de melhoria que permite aos colonos tentar melhorar a qualidade dos edifícios.
 
-[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3549864494]Chrono Save[/url][/h3]
+[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3549864494]Chrono Salvamento[/url][/h3]
 Adiciona um sistema de salvamento automático separado que salva baseado na passagem do tempo do mundo real ao invés do tempo do jogo. Isso funciona independentemente do sistema de salvamento automático vanilla.
 
 [hr][/hr] 

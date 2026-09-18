@@ -7,23 +7,25 @@ Curar una adicción suele significar encerrar a un colono y esperar a que pase e
 [h2]CARACTERÍSTICAS PRINCIPALES[/h2]
 [list]
 [*] Añade un ciclo de desintoxicación a cada cápsula de bioescultura
-[*] Cura las adicciones a las drogas, incluidas las de otros mods que sigan la nomenclatura del juego base
+[*] Cura las adicciones a las drogas, incluidas las que añaden otros mods
 [*] Elimina a la vez las tolerancias, así que la siguiente dosis empieza de cero
-[*] Envía una carta con el nombre del colono cuando termina el ciclo
+[*] Envía una notificación con el nombre del colono cuando termina el ciclo
 [/list]
 
 [h2]CÓMO FUNCIONA[/h2]
 [list]
 [*] Queda disponible en cuanto investigas la biorregeneración
 [*] Mete al colono en la cápsula y elige el ciclo de desintoxicación
-[*] El ciclo dura 12 días, más que la inversión de edad con 8 y menos que la biorregeneración con 25
+[*] El ciclo dura 12 días por defecto, y puedes ajustarlo entre 1 y 30 días en las opciones del mod
+[*] Como referencia, la reversión de edad dura 8 días y la bioregeneración, 25
+[*] Un ciclo ya iniciado conserva la duración con la que empezó
 [*] El colono sale sin adicciones y sin tolerancias
 [/list]
 
 [h2]LO QUE NO TOCA[/h2]
 [list]
-[*] La adicción al luciferio no se elimina nunca, porque los mecanitas ya no se pueden sacar
-[*] La tolerancia al luciferio se deja igual por el mismo motivo
+[*] Las adicciones permanentes no se tocan a menos que actives "Tratar las adicciones permanentes" en las opciones del mod, un ajuste desactivado por defecto
+[*] En el juego base, la única adicción permanente es la del luciferio
 [*] Las heridas, las partes del cuerpo que falten y todo lo que no sea una dependencia de drogas quedan intactos
 [/list]
 
@@ -48,7 +50,7 @@ Echa un vistazo a mis otros mods:
 [h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3538863870]Mejora Simple[/url][/h3]
 Añade un trabajo de mejora que permite a los colonos intentar mejorar la calidad de los edificios.
 
-[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3549864494]Chrono Save[/url][/h3]
+[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3549864494]Chrono Guardado[/url][/h3]
 Añade un sistema de guardado automático separado que guarda basándose en el paso del tiempo del mundo real en lugar del tiempo del juego. Esto funciona independientemente del sistema de guardado automático vanilla.
 
 [hr][/hr] 

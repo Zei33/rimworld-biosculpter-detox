@@ -2,13 +2,13 @@ Désintoxication Biosculpteur [1.6] (Biosculpter Detox)
 
 [h1]Désintoxication Biosculpteur[/h1]
 
-Soigner une addiction revient d'ordinaire à enfermer un colon et à attendre la fin du manque. Désintoxication Biosculpteur ajoute un cycle de désintoxication à la capsule de biosculptage, qui supprime l'addiction et la tolérance qui l'accompagne.
+Soigner une addiction revient d'ordinaire à enfermer un colon et à attendre la fin du sevrage. Désintoxication Biosculpteur ajoute un cycle de désintoxication à la capsule de biosculptage, qui supprime l'addiction et l'accoutumance qui l'accompagne.
 
 [h2]FONCTIONS PRINCIPALES[/h2]
 [list]
 [*] Ajoute un cycle de désintoxication à chaque capsule de biosculptage
-[*] Soigne les addictions aux drogues, y compris celles des mods qui suivent la nomenclature du jeu de base
-[*] Supprime en même temps les tolérances, la dose suivante repart donc de zéro
+[*] Soigne les addictions aux drogues, y compris celles ajoutées par d'autres mods
+[*] Supprime en même temps les accoutumances, la dose suivante repart donc de zéro
 [*] Envoie une lettre nommant le colon à la fin du cycle
 [/list]
 
@@ -16,15 +16,17 @@ Soigner une addiction revient d'ordinaire à enfermer un colon et à attendre la
 [list]
 [*] Devient disponible une fois la biorégénération recherchée
 [*] Placez le colon dans la capsule et choisissez le cycle de désintoxication
-[*] Le cycle dure 12 jours, plus que l'inversion de l'âge à 8 jours et moins que la biorégénération à 25
-[*] Le colon ressort sans ses addictions ni ses tolérances
+[*] Le cycle dure 12 jours par défaut, et vous pouvez en régler la durée de 1 à 30 jours dans les options de mod
+[*] À titre de comparaison, le rajeunissement dure 8 jours et la biorégénération, 25
+[*] Un cycle déjà commencé conserve la durée avec laquelle il a démarré
+[*] Le colon ressort sans ses addictions ni ses accoutumances
 [/list]
 
 [h2]CE QUI N'EST PAS TRAITÉ[/h2]
 [list]
-[*] L'addiction au luciferium n'est jamais retirée, car les mécanites ne peuvent pas être extraites
-[*] La tolérance au luciferium est laissée intacte pour la même raison
-[*] Les blessures, les parties du corps manquantes et tout ce qui n'est pas une dépendance aux drogues restent inchangés
+[*] Les addictions permanentes ne sont pas traitées, sauf si vous activez dans les options de mod le paramètre "Traiter les addictions permanentes", désactivé par défaut
+[*] Dans le jeu de base, seul le luciferium provoque une addiction permanente
+[*] Les blessures, les parties du corps manquantes et tout ce qui n'est pas une addiction aux drogues restent inchangés
 [/list]
 
 [h2]PRÉREQUIS[/h2]
