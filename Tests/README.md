@@ -55,3 +55,34 @@ hediffs, and `NonDetoxifiableAddictions` correctly excludes `LuciferiumAddiction
 
 These tests pin that state rather than asserting what ought to be true, so fixing any of it turns
 a test red instead of changing nothing visible.
+
+## In-game checks owed after the 2026-09-18 issue sweep
+
+Every issue in this repo was closed on 2026-09-18, and the harness cannot run any of it: every
+entry point takes a `Pawn`, and Harmony cannot patch on this runtime at all. What the tests cover
+is the predicates and the patch targets. These six are the parts that are still a claim.
+
+1. **A pawn whose only treatable condition is a drug tolerance.** Give a pawn a tolerance with no
+   addiction, and confirm the cycle is offered, that its description says it will treat the
+   tolerance, and that the completion letter names what was removed. That whole chain was the
+   subject of issue #1 and every step of it used to disagree with the others.
+2. **A pawn with nothing to treat.** Confirm the detox option is disabled with a reason rather than
+   hidden, in the cycle-selection gizmo AND in the right-click float menu, since
+   `CannotUseNowPawnCycleReason` feeds both. The old gate could never run at all.
+3. **The same, in a non-English language.** The old gate matched a translated label, so it was false
+   in eight of the nine. Polish is the sharpest test: its label is "detoks", which does not even
+   contain the substring the old code looked for.
+4. **A luciferium-addicted pawn.** Confirm the addiction survives the cycle, and that any ordinary
+   addiction on the same pawn does not.
+5. **A save with a cycle already running, loaded after this update.** This is the migration, and it
+   is the one with real downside: the cycle key was renamed, and a save holding the old key that is
+   not migrated throws out of the pod's tick every tick and traps the occupant. Start a detox on the
+   previous build, save mid-cycle, load on this one, and confirm the cycle continues.
+6. **A completion of each kind.** One cycle that removes something and one that removes nothing,
+   confirming a letter arrives both times and that the second is neutral rather than bad news.
+
+A dev-mode `[DebugAction]` printing what `PerformDetox` would remove from the selected pawn, without
+removing it, would make 1 and 4 cheap. It does not exist yet.
+
+An in-game check needs Ideology, the Bioregeneration research, a pod and a genuinely addicted pawn.
+Detox is always last in the gizmo bar, because the comp is appended after the four vanilla ones.
