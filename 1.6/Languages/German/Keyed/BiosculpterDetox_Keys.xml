@@ -7,7 +7,7 @@
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Entgiftungsbehandlung abgeschlossen</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0} hat die Entgiftung in der Biosculpter-Kapsel abgeschlossen. Jede behandelbare Drogensucht und Drogentoleranz wurde entfernt.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0} hat die Entgiftung in der Bioformerkapsel abgeschlossen. Jede behandelbare Drogensucht und Drogentoleranz wurde entfernt.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Geheilt: {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Entgiftung abgeschlossen: nichts zu behandeln</BiosculpterDetox_NoConditionsLetterTitle>
   <BiosculpterDetox_NoConditionsLetterText>{0} hat den Entgiftungszyklus abgeschlossen, hatte aber weder Drogensucht noch Drogentoleranz zu behandeln. Der Zyklus blieb ohne Wirkung.</BiosculpterDetox_NoConditionsLetterText>

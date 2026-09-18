@@ -3,19 +3,19 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>детоксикация</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Снимает с пациента все наркотические зависимости и все привыкания к препаратам. Ломка проходит вместе с зависимостью, которая её вызывает.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Снимает с пациента все наркотические зависимости и толерантность ко всем препаратам. Ломка проходит вместе с зависимостью, которая её вызывает.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Детоксикационное лечение завершено</BiosculpterDetox_LetterTitle>
-  <BiosculpterDetox_LetterText>{0} прошёл курс детоксикации в капсуле биоскульптора. Все наркотические зависимости и привыкания, поддающиеся лечению, устранены.</BiosculpterDetox_LetterText>
+  <BiosculpterDetox_LetterText>{0} прошёл курс детоксикации в капсуле биоскульптора. Все поддающиеся лечению наркотические зависимости и толерантность к препаратам устранены.</BiosculpterDetox_LetterText>
   <BiosculpterDetox_Cured>Вылечено: {0}</BiosculpterDetox_Cured>
   <BiosculpterDetox_NoConditionsLetterTitle>Детоксикация завершена: лечить было нечего</BiosculpterDetox_NoConditionsLetterTitle>
-  <BiosculpterDetox_NoConditionsLetterText>{0} завершил цикл детоксикации, но лечить было нечего: ни наркотической зависимости, ни привыкания к препаратам. Цикл прошёл без эффекта.</BiosculpterDetox_NoConditionsLetterText>
+  <BiosculpterDetox_NoConditionsLetterText>{0} завершил цикл детоксикации, но лечить было нечего: ни наркотической зависимости, ни толерантности к препаратам. Цикл прошёл без эффекта.</BiosculpterDetox_NoConditionsLetterText>
   
   <!-- Gizmo and UI messages -->
   <BiosculpterDetox_NoAddictionsToTreat>Нет зависимостей для лечения</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Будет лечить: {0}</BiosculpterDetox_WillTreat>
-  <BiosculpterDetox_NoConditionsToTreat>Ни зависимостей, ни привыканий не обнаружено. Цикл завершится без эффекта.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_NoConditionsToTreat>Ни зависимостей, ни толерантности к препаратам не обнаружено. Цикл завершится без эффекта.</BiosculpterDetox_NoConditionsToTreat>
   <BiosculpterDetox_PermanentAddictionsTreated>Постоянные зависимости вроде люциферия будут вылечены.</BiosculpterDetox_PermanentAddictionsTreated>
   <BiosculpterDetox_PermanentAddictionsSkipped>Постоянные зависимости вроде люциферия вылечены не будут.</BiosculpterDetox_PermanentAddictionsSkipped>
   
