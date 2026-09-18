@@ -1,9 +1,13 @@
 # Biosculpter Detox
 
 Adds a "detox" cycle to every biosculpter pod. A pawn who finishes it comes out with every drug
-addiction hediff and every drug tolerance hediff stripped, and the player gets a positive letter.
+addiction hediff and every drug tolerance hediff stripped, and the player gets a letter either way.
 The cycle runs a nominal 12 days (players see roughly 11 after the pod's speed stat) and is gated
-behind Ideology's Bioregeneration research. Luciferium is deliberately excluded.
+behind Ideology's Bioregeneration research. Permanently incurable addictions are excluded, which is
+Luciferium in vanilla, by the game's own `everCurableByItem` flag rather than by name.
+
+**All seven issues were closed on 2026-09-18.** Most of what the trap list below used to warn about
+is gone, and what is left is marked. Read the source before acting on anything here.
 
 Released, v1.0.1, Workshop 3540117812, 1706 subscribers, last Workshop update 22 Aug 2025. Full audit with
 evidence: `/Users/matthewscott/Programming/rimworld/docs/recon/2026-09-17-recon-dossier.md` (grep the repo name).
@@ -15,11 +19,9 @@ evidence: `/Users/matthewscott/Programming/rimworld/docs/recon/2026-09-17-recon-
 | `1.6/ModEntry.cs` | `BiosculpterDetoxMod : Mod`. Harmony `com.zei33.biosculpterdetox`, `PatchAll()`, one log line. 31 lines. |
 | `1.6/Patches/BiosculpterPatches.cs` | Both Harmony patches, as two nested classes. Postfixes only, no prefixes or transpilers. |
 | `1.6/Core/CompProperties_BiosculpterPod_DetoxCycle.cs` | `: CompProperties_BiosculpterPod_BaseCycle`, sets `compClass`. 19 lines. |
-| `1.6/Core/CompBiosculpterPod_DetoxCycle.cs` | `: CompBiosculpterPod_Cycle`. Overrides `CycleCompleted(Pawn)` and `Description(Pawn)`. `CanUseOn` at :87 has zero callers. |
-| `1.6/Core/DetoxCycle.cs` | All real logic. Three `static readonly List<string>` name lists, plus `PerformDetox`, `RemoveDrugTolerances`, `HasDetoxifiableConditions`, `GetDetoxifiableConditionNames`. |
-| `1.6/Core/BiosculpterDetoxDefOf.cs` | Empty class, no `[DefOf]`, no fields, no references. Dead. |
-| `1.6/Defs/BiosculpterCycleDefs/Cycles_Detox.xml` | `<Defs>` containing only a comment. Defines nothing. |
-| `1.6/Languages/*/Keyed/BiosculpterDetox_Keys.xml` | 9 languages, 10 keys each, all present (verified). `BiosculpterDetox_TreatingConditions` is referenced by no code. |
+| `1.6/Core/CompBiosculpterPod_DetoxCycle.cs` | `: CompBiosculpterPod_Cycle`. Overrides `CycleCompleted(Pawn)` and `Description(Pawn)`. `CanUseOn` is live: the `CannotUseNowPawnCycleReason` patch calls it. Must stay unsealed. |
+| `1.6/Core/DetoxCycle.cs` | All real logic, and **no defName matching of any kind**. Three predicates (`IsCurableAddiction`, `IsDrugTolerance`, `IsDetoxifiable`) that take the chemical list as a parameter so they are testable, plus `DetoxifiableConditions`, `HasDetoxifiableConditions`, `GetDetoxifiableConditionNames` and `PerformDetox`, which returns what it removed and says nothing to the player. |
+| `1.6/Languages/*/Keyed/BiosculpterDetox_Keys.xml` | 9 languages, 10 keys each, parity verified. No orphans. |
 
 Flow: the spawn postfix builds a `CompProperties_BiosculpterPod_DetoxCycle` in C# and appends a live comp
 to `parent.AllComps`. Vanilla `CompBiosculpterPod.SetupCycleCaches()` picks it up through
@@ -29,103 +31,84 @@ to `parent.AllComps`. Vanilla `CompBiosculpterPod.SetupCycleCaches()` picks it u
 
 | Harmony target | Patch | Notes |
 |---|---|---|
-| `CompBiosculpterPod.PostSpawnSetup` | Postfix, `BiosculpterPatches.cs:20-62` | Load-bearing. Adds the comp. Mutates `AllComps` during `ThingWithComps.SpawnSetup`'s own comps loop, which is safe only because that loop is index-based and re-reads `comps.Count`. |
-| `CompBiosculpterPod.CompGetGizmosExtra` | Postfix, `BiosculpterPatches.cs:68-120` | Meant to disable the detox gizmo for unaddicted pawns and append a preview. Never fires. See traps. |
+| `CompBiosculpterPod.PostSpawnSetup` | Postfix | Load-bearing. Adds the comp. Mutates `AllComps` during `ThingWithComps.SpawnSetup`'s own comps loop, which is safe only because that loop is index-based and re-reads `comps.Count`. |
+| `CompBiosculpterPod.CannotUseNowPawnCycleReason(Pawn, Pawn, CompBiosculpterPod_Cycle, bool)` | Postfix | Gives the reason when the pawn has nothing to treat. **Argument types are mandatory in the attribute**: there are two public overloads and a name-only patch does not resolve. Defers to a reason vanilla already gave. |
+| `CompBiosculpterPod.PostExposeData` | Postfix | Migrates the legacy cycle key `"detox"` to the namespaced one on `PostLoadInit`, copying vanilla's own `"healing"` to `"medic"` rename. |
 
 Both are wrapped in `try`/`catch` + `Log.Error`. The only texture is `1.6/Textures/UI/Commands/Detox.png`.
 
 ## Invariants and traps
 
-- **The cycle is not a def.** There is no `BiosculpterPodCycleDef` type in 1.6; cycles are comps, and
-  `Cycles_Detox.xml` is a stub. Do not look for XML that configures the cycle, and do not "fix" the stub.
+- **The cycle is not a def.** There is no `BiosculpterPodCycleDef` type in 1.6; cycles are comps.
+  The mod ships no `Defs` folder at all now: the stub that used to be there claimed the game
+  required one, which is false, and Chrono Save ships none either.
 - The comp is never serialised. `ThingWithComps.ExposeData` calls `InitializeComps()` on
-  `LoadingVars`, rebuilding `comps` from `def.comps` only, so the detox comp is destroyed on every load
-  and re-added by the spawn postfix. It holds no state and does not override `PostExposeData`, so this
-  round-trips cleanly. Keep it stateless.
-- **Every defName in `DetoxifiableAddictions` (`DetoxCycle.cs:18-29`) is wrong.** The real vanilla names,
-  verified in `$RimWorldDir/Data/Core/Defs/Drugs/`, are `AlcoholAddiction`, `AmbrosiaAddiction`,
-  `GoJuiceAddiction`, `LuciferiumAddiction`, `PsychiteAddiction`, `SmokeleafAddiction`, `WakeUpAddiction`;
-  nothing starts with `Addiction_`. The allow-list has never matched a hediff, and every cure actually
-  happens through the substring fallback at `DetoxCycle.cs:94-97`.
-- **`DetoxifiableWithdrawals` (`DetoxCycle.cs:35-45`) matches nothing, and a naive test will not catch
-  it.** RimWorld has no withdrawal `HediffDef` at all; withdrawal is stage index 1 of the addiction
-  hediff, selected by `Hediff_Addiction.CurStageIndex`. Six of those eight names *do* exist in the game
-  data (`AlcoholWithdrawal`, `AmbrosiaWithdrawal`, `GoJuiceWithdrawal`, `PsychiteWithdrawal`,
-  `SmokeleafWithdrawal`, `WakeUpWithdrawal`), but they are `ThoughtDef`s, and the mod only ever walks
-  `pawn.health.hediffSet.hediffs`. **Any defName-validation test written for this repo must resolve
-  against `HediffDef` specifically, not the global defName set, or it will certify this dead list as
-  healthy and lock the bug in.**
-- The Luciferium exclusion is a hardcoded defName (`DetoxCycle.cs:51-54`, applied at :97, :104,
-  :196, :221). Correct and complete for vanilla, wrong in principle: the game already carries the flag
-  vanilla itself uses. `LuciferiumAddiction` sets `<everCurableByItem>false</everCurableByItem>`
-  (`Data/Core/Defs/Drugs/Luciferium.xml:124`) and `CompBiosculpterPod_HealingCycle.WillHeal` opens with
-  `if (!hediff.def.everCurableByItem) return false;`. Any modded permanent addiction ending in
-  "Addiction" is currently cured.
-- The gizmo gating in `BiosculpterPatches.cs:91` is dead twice over. It matches on
-  `command.defaultLabel.ToLower().Contains("detox")`, a localised string built from
-  `BiosculpterDetox_CycleLabel`: only English yields "detox" (Polish "detoks", French "désintoxication",
-  Chinese "戒毒"). Independently, `__instance.Occupant` is null at that moment. The getter returns
-  `pawnEnteringBiosculpter` when it is non-null, then requires both `currentCycleKey != null` and
-  `innerContainer.Count == 1`; `pawnEnteringBiosculpter` is only ever set and cleared inside one
-  synchronous `TryAcceptPawn` call, and no cycle is current while the cycle-selection gizmos are
-  drawn, so every branch yields null and the `occupant != null` arms never run. Match on the mod's own
-  comp type.
-- `pawn.Map` is null inside `CycleCompleted`. The pawn is still in `innerContainer` and despawned,
-  so `Thing.Map` returns null and both `MoteMaker.ThrowText` calls (`DetoxCycle.cs:123`, :139) are
-  unreachable. Use `pawn.MapHeld`, or follow vanilla cycles and use `Messages.Message`.
-- **There is no `ModSettings` class anywhere in the repo**, and `BiosculpterDetoxMod` overrides neither
-  `SettingsCategory()` nor `DoSettingsWindowContents(Rect)`, so the mod has no entry in Mod Settings.
-  This is the structural blocker behind both most-requested features. A second sits behind it:
-  `CompProperties` are constructed per pod in the spawn postfix (`BiosculpterPatches.cs:36-45`), so a
-  runtime setting change would not reach existing pods until they are hoisted to one shared static.
-- `durationDays = 12f` is a hardcoded literal at `BiosculpterPatches.cs:42`, the only occurrence in
-  the repo. The live Workshop description claims "Time in the pod is determined by the severity of the
-  addiction". Nothing implements that: no severity input, no scaling. `README.md:25` and
-  `Documentation/Features.md:29` correctly say a flat 12 days, so the store page is the odd one out. Both
-  also claim this matches the pleasure cycle; pleasure is 4, medic 6, ageReversal 8, bioregeneration 25.
-- ~~This repo has no `Workshop/` folder.~~ **Fixed 2026-09-18**, commit `7a79092`. It carries nine
-  translated description `.md` files now, like Simple Improve and Chrono Save, and unlike either of
-  those they are **generated** rather than hand-maintained: edit
-  `Workshop/src/body/<Language>.bbcode` and rerun `workshop-content-builder`, never the `.md` itself,
-  which the builder refuses to overwrite once hand-edited. So a fix that changes player-visible
-  behaviour costs a regeneration rather than a nine-language translation job. The new copy already
-  states the real 12 day duration and drops the treatment preview and withdrawal removal claims, so
-  the copy half of B-3 is settled ahead of the code half. Matthew still pastes the pages into Steam
-  by hand at release; the website is region-blocked from this machine.
-- `DefDatabase<ResearchProjectDef>.GetNamed("Bioregeneration")` at `BiosculpterPatches.cs:44` throws
-  without Ideology, straight into the swallowing catch, so the mod silently does nothing. `About.xml`
-  declares only the Harmony dependency and never declares Ideology.
-- `key = "detox"` is not namespaced, and `cycleLookup[key] = cycle` overwrites silently, so a second mod
-  using that key produces two gizmos and an ambiguous lookup. Uninstalling mid-cycle leaves an
-  unresolvable `currentCycleKey` in the save and NREs the pod every tick.
-- `Documentation/Architecture.md` is fiction in places: it names three Harmony patches, two of which do
-  not exist, documents power and nutrition as cycle properties (not fields on
-  `CompProperties_BiosculpterPod_BaseCycle`), and describes a mood buff the mod never applies.
+  `LoadingVars`, rebuilding `comps` from `def.comps` only, so the detox comp is destroyed on every
+  load and re-added by the spawn postfix. It holds no state and does not override `PostExposeData`.
+  **Keep it stateless.**
+- **The comp must stay unsealed, and this is load-bearing rather than stylistic.** `AllComps.Add`
+  does not populate `compsByType`, and `GetComp<T>` consults that dictionary on any thing with three
+  or more comps, which every biosculpter pod is. It still finds the comp only because `GetComp` falls
+  through to a linear scan for an unsealed `T`. Sealing it returns null, and the spawn postfix uses
+  that exact lookup to decide whether it has already added the comp, so every pod would accumulate a
+  duplicate cycle on every spawn. There is a test.
+- **Nothing matches a defName any more, and nothing should start again.** An addiction is
+  `hediff is Hediff_Addiction && hediff.def.everCurableByItem`, which is vanilla's own predicate from
+  `HealthUtility.FindAddiction` and the flag the vanilla healing cycle gates on. Both halves are
+  needed: the flag alone is a general medical flag that 14 of its 15 shipped users apply to non-drug
+  conditions, and the type alone would catch Biotech's `Hediff_ChemicalDependency`, whose removal
+  kills the pawn because the gene re-adds it. A test asserts the three old lists cannot come back.
+- **Withdrawal is not a hediff.** It is stage index 1 of the addiction hediff, chosen at runtime from
+  `Need_Chemical.CurCategory`. There is no withdrawal `HediffDef` in the game. Curing the addiction
+  removes the stage, removes the chemical need (declared `onlyIfCausedByHediff`) and flips the
+  withdrawal thought to inactive. **Do not add anything that looks for a withdrawal hediff.**
+- **Tolerance has no class to type-test.** Every shipped tolerance inherits `DrugToleranceBase`, whose
+  `hediffClass` is the plain `HediffWithComps`. The structural marker is the comp,
+  `HediffCompProperties_DrugEffectFactor` (namespace `Verse`), which carries the chemical it dampens.
+  The mod also checks `ChemicalDef.toleranceHediff`, for a modded tolerance that skips the comp.
+  Enumerate all chemicals, not the addictive ones: Odyssey's Psilocap has a tolerance and cannot be
+  addictive. `GoJuiceTolerance` and `WakeUpTolerance` are orphan defs in 1.6 that no chemical points
+  at, which is why the comp clause is the one that matters.
+- **The predicates take the chemical list as a parameter on purpose.** The harness cannot touch
+  `DefDatabase` and naming any `DefOf` member there throws `TypeInitializationException`. That
+  parameter is the whole reason the decisions in this mod are testable at all. Do not "simplify" it
+  by reading the database inside them.
+- `pawn.Map` is null inside `CycleCompleted`: the pawn is despawned inside `innerContainer` and the
+  eject happens on the next line of the caller. `MoteMaker.ThrowText` **throws** on a null map rather
+  than no-opping, so anything positional must use `parent`, the pod, which is spawned throughout.
+  The two motes that used to be here were unreachable and are deleted.
+- **`CannotUseNowPawnCycleReason` has two public overloads.** A `[HarmonyPatch]` naming it without
+  argument types does not resolve, the same trap the workspace records for `GenConstruct.CanConstruct`.
+  The four-parameter one is the real body; the three-parameter one delegates to it.
+- **Never identify a cycle or a gizmo by its label.** `Command.defaultLabel` is translated. The old
+  gate matched `defaultLabel.ToLower().Contains("detox")`, which is false in all eight non-English
+  languages: Polish is "detoks". A test walks every source file to keep it that way.
+- **Renaming the cycle key needs a migration, always.** `CurrentCycle` resolves through
+  `cycleLookup[key]`, so a saved key that no longer resolves throws out of the pod's tick every tick
+  and traps the occupant. The key is `Zei33.BiosculpterDetox.Detox` and `PostExposeData` rewrites the
+  legacy `"detox"` on load, copying vanilla's own `"healing"` to `"medic"` rename. Nothing can help a
+  player who removes the mod mid-cycle, because the fixing code leaves with the mod.
+- **`CompProperties` are built per pod on purpose, not hoisted to a static.** The label is translated
+  at construction, and a static built once keeps whatever language was active when the first pod
+  spawned. Changing language reloads play data, so every pod respawns and rebuilds correctly.
+- **There is no `ModSettings` class**, and `BiosculpterDetoxMod` overrides neither `SettingsCategory()`
+  nor `DoSettingsWindowContents(Rect)`, so the mod has no entry in the mod options. This is the
+  structural blocker behind both most-requested features, the Luciferium toggle and the duration.
+- `durationDays = 12f` is a hardcoded literal in the spawn postfix, the only occurrence in the repo.
+  The live Workshop description still claims the time depends on the severity of the addiction;
+  nothing implements that. The repo's generated pages already state the real 12 days, so it resolves
+  when the pages are repasted.
 
 ## Defect register
 
-Confirmed high severity. Evidence, decompiled excerpts and failure scenarios are in the dossier.
+**Empty.** All seven issues were closed on 2026-09-18; see the closing comments on each for what was
+done and what was deliberately not. The four that were confirmed high are all structural rather than
+patched over: the dead allow-lists are deleted, the Luciferium exclusion reads the game's own flag,
+the substring matching is gone entirely, and the three copies of the match test are one predicate.
 
-| Defect | Location | What breaks |
-|---|---|---|
-| `DetoxifiableAddictions` allow-list is entirely dead | `1.6/Core/DetoxCycle.cs:18` | Nine defNames that have never existed. All cures run through the substring fallback instead. |
-| `DetoxifiableWithdrawals` matches nothing | `1.6/Core/DetoxCycle.cs:35` | No withdrawal hediff exists in any RimWorld version. The advertised "removes withdrawal effects" is kept only as a side effect of removing the addiction. |
-| Luciferium exclusion hardcodes a defName instead of reading `everCurableByItem` | `1.6/Core/DetoxCycle.cs:51` | Modded permanent addictions, and any rename or repatch of the luciferium hediff, are cured anyway. |
-| Blanket substring matching over an uncontrolled namespace (`likely`, not confirmed) | `1.6/Core/DetoxCycle.cs:94`, `:163` | `EndsWith("Addiction")` and unanchored `Contains("Tolerance")` delete arbitrary modded hediffs. Safe in vanilla only by luck. |
-
-Three confirmed mediums are covered under traps (dead gizmo gating, unreachable motes, `removedAny` never
-set by `RemoveDrugTolerances` at `DetoxCycle.cs:117`, so a tolerance-only detox reports failure). One
-medium `likely`, fixed in the repo on 2026-09-17 but still live on the Workshop:
-`com.rlabrecque.steamworks.net.dll` and `ISharpZipLib.dll` are the game's own assemblies, and the
-22 Aug 2025 Workshop file still ships them inside `1.6/Assemblies/net472/` at 451 KB per subscriber.
-`build.sh` now deletes everything in the staged output bar `BiosculpterDetox.dll` and every csproj
-`<Reference>` is `<Private>false</Private>`, so a build no longer produces them, but the published copy
-carries them until the next upload. Nine lows follow in the dossier.
-
-The highest-value refactor collapses the three duplicated matching expressions (`PerformDetox`,
-`HasDetoxifiableConditions`, `GetDetoxifiableConditionNames`) into one predicate over `HediffDef`, driven
-by `DefDatabase<ChemicalDef>` `addictionHediff` / `toleranceHediff` and `everCurableByItem`. That is the
-correctness fix, the testability fix and the thing that makes a settings screen tractable.
+What remains open is a feature rather than a defect: the mod has nowhere to hang a setting, which is
+what two players have asked for. That needs its own issue and a decision about what the settings
+should be.
 
 ## Open user reports
 
@@ -157,26 +140,28 @@ dotnet build rimworld-biosculpter-detox.sln -c Release   # clean, zero warnings
 - Building writes into `1.6/Assemblies/net472/`, which `.gitignore` now excludes outright.
   `BiosculpterDetox.dll`, `.pdb` and the two game DLLs were removed from the index on 2026-09-17, so a
   build no longer dirties the tree.
-- Tests: `dotnet test Tests/BiosculpterDetox.Tests.csproj`, 9 passing as of 2026-09-17. Outside the
+- Tests: `dotnet test Tests/BiosculpterDetox.Tests.csproj`, 27 passing as of 2026-09-18. Outside the
   sln, and `Compile Remove="Tests/**"` keeps them out of the shipped DLL. See `Tests/README.md`.
-- The mod's behaviour is still not unit-testable: every entry point takes a `Pawn`. What the tests
-  cover instead is the hardcoded defNames, read from the game's shipped XML and checked against
-  `HediffDef` **specifically**. That type restriction is the whole point and has a test of its own:
-  six of the eight withdrawal names exist as `ThoughtDef`s, so an untyped check would pass and
-  certify a dead list as healthy.
-- **All 17 names in both detoxifiable lists are dead.** `DetoxifiableAddictions` spells every entry
-  `Addiction_Alcohol`; the real hediffs are `AlcoholAddiction`, suffix not prefix. Of
-  `DetoxifiableWithdrawals`, six are `ThoughtDef`s and `FlakeWithdrawal` and `YayoWithdrawal` do not
-  exist at all. Further: **there is no withdrawal `HediffDef` in 1.6 at all**, so the
-  `EndsWith("Withdrawal")` fallback cannot fire either and the withdrawal half of this mod has never
-  removed anything. The mod works only through `EndsWith("Addiction")`, which catches all seven real
-  addiction hediffs, with `LuciferiumAddiction` correctly excluded. Confirm with the test suite
-  before acting on issues #4 and #5.
-- The three copies of the match test are **not identical**, and that is defect B-1 (#1).
-  `HasDetoxifiableConditions` counts tolerances, `PerformDetox` and `GetDetoxifiableConditionNames`
-  do not. A tolerance-only pawn therefore passes the eligibility gate, has the tolerance removed, is
-  listed as having nothing to treat, and is reported as a failure. Do not unify them as a tidy-up;
-  that is the fix, and it belongs to #1.
+- **The decisions are testable now, and that was the point of the rewrite.** The three predicates in
+  `DetoxCycle` take the chemical list as a parameter instead of reading `DefDatabase`, so they run in
+  the harness. Everything that takes a `Pawn` is still out of reach.
+  `Tests/DetoxPredicateTests.cs` covers the cases the shipped game cannot demonstrate: a modded
+  `PainToleranceImplant` that the old `Contains("Tolerance")` would have eaten, Anomaly's
+  `CubeWithdrawal` that `EndsWith("Withdrawal")` would have removed, and a modded permanent addiction
+  excluded by the flag rather than by name.
+- **A defName-validation test here must resolve against `HediffDef` specifically**, never the global
+  defName set. Six of the eight old withdrawal names exist as `ThoughtDef`s, so an untyped check
+  passes on a dead list and certifies the bug as healthy. `Tests/DefValidationTests.cs` keeps that
+  case as a test of its own, because it is the trap rather than a detail.
+- The old defName lists are gone, and `Tests/DefValidationTests.cs` keeps their evidence as literals
+  with the history attached: none of the nine addiction names nor the eight withdrawal names has ever
+  been a `HediffDef`. One test asserts the three lists cannot come back. Another asserts the premise
+  the Luciferium exclusion rests on, that the shipped def really does set `everCurableByItem` false,
+  so Ludeon dropping that flag surfaces as a decision rather than a silent balance change.
+- `Tests/PatchTargetTests.cs` checks that every member the Harmony patches name still exists,
+  including that `CannotUseNowPawnCycleReason` still has exactly two overloads and that the private
+  `currentCycleKey` the migration injects by string is still called that. Harmony cannot patch on
+  this runtime at all, so a patch whose target stops resolving is otherwise silent.
 - A dev-mode `[DebugAction]` printing what `PerformDetox` would remove from the selected pawn,
   without removing it, is still the only way to check the behaviour itself.
 - An in-game check needs Ideology, the Bioregeneration research, a pod and a genuinely addicted pawn.
