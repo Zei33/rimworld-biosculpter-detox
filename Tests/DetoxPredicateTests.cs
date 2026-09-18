@@ -30,7 +30,7 @@ namespace BiosculpterDetox.Tests
         [Test]
         public void AnOrdinaryAddictionIsCurable()
         {
-            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("AlcoholAddiction", curable: true)), Is.True);
+            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("AlcoholAddiction", curable: true), cureIncurableAddictions: false), Is.True);
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace BiosculpterDetox.Tests
             // This is how luciferium is excluded now: LuciferiumAddiction sets everCurableByItem
             // false, which is the same flag the vanilla biosculpter healing cycle gates on. The old
             // code spelled the defName instead, so a modded permanent addiction was cured anyway.
-            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("LuciferiumAddiction", curable: false)), Is.False);
+            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("LuciferiumAddiction", curable: false), cureIncurableAddictions: false), Is.False);
         }
 
         [Test]
@@ -47,8 +47,8 @@ namespace BiosculpterDetox.Tests
         {
             // The point of the change. A modded permanent addiction with a name this mod has never
             // heard of is excluded, and a hediff merely NAMED like luciferium is not.
-            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("SomeModdedForeverAddiction", curable: false)), Is.False);
-            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("LuciferiumFlavouredBeerAddiction", curable: true)), Is.True);
+            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("SomeModdedForeverAddiction", curable: false), cureIncurableAddictions: false), Is.False);
+            Assert.That(DetoxCycle.IsCurableAddiction(Addiction("LuciferiumFlavouredBeerAddiction", curable: true), cureIncurableAddictions: false), Is.True);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace BiosculpterDetox.Tests
             // plain hediff with that suffix was removed. Nothing but a real addiction qualifies now.
             var impostor = new Hediff { def = HediffDef("TotallyRealAddiction", curable: true) };
 
-            Assert.That(DetoxCycle.IsCurableAddiction(impostor), Is.False);
+            Assert.That(DetoxCycle.IsCurableAddiction(impostor, cureIncurableAddictions: false), Is.False);
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace BiosculpterDetox.Tests
             HediffDef impostor = HediffDef("PainToleranceImplant", curable: true);
 
             Assert.That(DetoxCycle.IsDrugTolerance(impostor, NoChemicals()), Is.False);
-            Assert.That(DetoxCycle.IsDetoxifiable(new Hediff { def = impostor }, NoChemicals()), Is.False);
+            Assert.That(DetoxCycle.IsDetoxifiable(new Hediff { def = impostor }, NoChemicals(), cureIncurableAddictions: false), Is.False);
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace BiosculpterDetox.Tests
             // is safe for a reason that does not depend on anybody remembering it exists.
             HediffDef cube = HediffDef("CubeWithdrawal", curable: true);
 
-            Assert.That(DetoxCycle.IsDetoxifiable(new Hediff { def = cube }, NoChemicals()), Is.False);
+            Assert.That(DetoxCycle.IsDetoxifiable(new Hediff { def = cube }, NoChemicals(), cureIncurableAddictions: false), Is.False);
         }
 
         [Test]
@@ -117,15 +117,15 @@ namespace BiosculpterDetox.Tests
             tolerance.comps = new List<HediffCompProperties> { new HediffCompProperties_DrugEffectFactor() };
 
             Assert.That(
-                DetoxCycle.IsDetoxifiable(new Hediff { def = tolerance }, NoChemicals()), Is.True,
+                DetoxCycle.IsDetoxifiable(new Hediff { def = tolerance }, NoChemicals(), cureIncurableAddictions: false), Is.True,
                 "A drug tolerance is treatable, and every method that asks must get this answer.");
         }
 
         [Test]
         public void ANullHediffOrDefIsNotTreatable()
         {
-            Assert.That(DetoxCycle.IsDetoxifiable(null, NoChemicals()), Is.False);
-            Assert.That(DetoxCycle.IsDetoxifiable(new Hediff(), NoChemicals()), Is.False);
+            Assert.That(DetoxCycle.IsDetoxifiable(null, NoChemicals(), cureIncurableAddictions: false), Is.False);
+            Assert.That(DetoxCycle.IsDetoxifiable(new Hediff(), NoChemicals(), cureIncurableAddictions: false), Is.False);
             Assert.That(DetoxCycle.IsDrugTolerance(null, NoChemicals()), Is.False);
         }
 
@@ -144,6 +144,102 @@ namespace BiosculpterDetox.Tests
 
             Assert.That(DetoxCycle.IsDrugTolerance(tolerance, chemicals), Is.True);
             Assert.That(DetoxCycle.IsDrugTolerance(HediffDef("Other", curable: true), chemicals), Is.False);
+        }
+
+        [Test]
+        public void TheSettingLetsThroughAnAddictionTheGameCallsPermanent()
+        {
+            // The whole point of the toggle. Luciferium is the only shipped addiction that declares
+            // itself incurable, so this is that case and, in practice, only that case.
+            Assert.That(
+                DetoxCycle.IsCurableAddiction(
+                    Addiction("LuciferiumAddiction", curable: false), cureIncurableAddictions: true),
+                Is.True);
+        }
+
+        [Test]
+        public void TheSettingStillWillNotTouchSomethingThatIsNotAnAddiction()
+        {
+            // The safety property, and the reason the toggle relaxes ONE of the two terms rather
+            // than replacing the predicate. Fifteen shipped hediffs declare themselves incurable and
+            // fourteen of them have nothing to do with drugs: sterilisation, deathrest, psychic
+            // bonds, a vat-growing child. The type test is what excludes those, and the setting must
+            // not be able to reach past it.
+            var impostor = new Hediff { def = HediffDef("PsychicBondTorn", curable: false) };
+
+            Assert.That(
+                DetoxCycle.IsCurableAddiction(impostor, cureIncurableAddictions: true), Is.False);
+            Assert.That(
+                DetoxCycle.IsDetoxifiable(impostor, NoChemicals(), cureIncurableAddictions: true),
+                Is.False);
+        }
+
+        [Test]
+        public void TheSettingCannotReachABiotechChemicalDependency()
+        {
+            // The one that kills a pawn if it is ever wrong, so it is asserted directly rather than
+            // left to follow from the test above.
+            //
+            // A gene-driven chemical dependency is excluded twice over in the shipped game: it sets
+            // everCurableByItem false AND its hediff class is Hediff_ChemicalDependency, which is a
+            // SIBLING of Hediff_Addiction under HediffWithComps rather than a subclass of it. The
+            // setting relaxes only the flag, so the type test still carries the exclusion on its
+            // own. Removing one of these is fatal: the gene re-adds it and the pawn dies without
+            // the drug.
+            var dependency = new Hediff_ChemicalDependency
+            {
+                def = HediffDef("GeneticDrugNeed", curable: false)
+            };
+
+            Assert.That(
+                DetoxCycle.IsCurableAddiction(dependency, cureIncurableAddictions: true), Is.False,
+                "A chemical dependency became curable. This kills pawns.");
+            Assert.That(
+                DetoxCycle.IsDetoxifiable(dependency, NoChemicals(), cureIncurableAddictions: true),
+                Is.False,
+                "A chemical dependency became detoxifiable. This kills pawns.");
+        }
+
+        [Test]
+        public void ChemicalDependencyIsASiblingOfAddictionRatherThanASubclass()
+        {
+            // The structural fact the test above rests on, asserted so that it fails loudly if a
+            // future RimWorld ever reparents the class. If this becomes a subclass, the type test
+            // stops excluding chemical dependencies and the setting above becomes lethal.
+            Assert.That(
+                typeof(Hediff_Addiction).IsAssignableFrom(typeof(Hediff_ChemicalDependency)),
+                Is.False,
+                "Hediff_ChemicalDependency now derives from Hediff_Addiction. The permanent "
+                + "addiction setting must gain an explicit exclusion for it immediately.");
+        }
+
+        [Test]
+        public void TheSettingChangesNothingAboutTolerances()
+        {
+            // Tolerance never consulted everCurableByItem, so the setting has no business moving it.
+            HediffDef tolerance = HediffDef("AmbrosiaTolerance", curable: true);
+            var chemicals = new List<ChemicalDef> { new ChemicalDef { toleranceHediff = tolerance } };
+            var hediff = new Hediff { def = tolerance };
+
+            Assert.That(
+                DetoxCycle.IsDetoxifiable(hediff, chemicals, cureIncurableAddictions: false), Is.True);
+            Assert.That(
+                DetoxCycle.IsDetoxifiable(hediff, chemicals, cureIncurableAddictions: true), Is.True);
+        }
+
+        [Test]
+        public void WithTheSettingOffTheBehaviourIsExactlyWhatShipped()
+        {
+            // The regression guard for 1,706 existing subscribers. Whatever the toggle does, the
+            // default must leave the mod behaving as it did before the toggle existed.
+            Assert.That(
+                DetoxCycle.IsCurableAddiction(
+                    Addiction("LuciferiumAddiction", curable: false), cureIncurableAddictions: false),
+                Is.False);
+            Assert.That(
+                DetoxCycle.IsCurableAddiction(
+                    Addiction("AlcoholAddiction", curable: true), cureIncurableAddictions: false),
+                Is.True);
         }
 
         private static List<ChemicalDef> NoChemicals()

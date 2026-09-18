@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>detoks</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Usuwa z pacjenta wszystkie uzależnienia od narkotyków i wszystkie tolerancje na narkotyki. Głód narkotykowy znika wraz z uzależnieniem, które go wywołuje. Trwałych uzależnień, takich jak lucyferium, nie da się wyleczyć.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Usuwa z pacjenta wszystkie uzależnienia od narkotyków i wszystkie tolerancje na narkotyki. Głód narkotykowy znika wraz z uzależnieniem, które go wywołuje.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Leczenie detoksykacyjne zakończone</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>Brak uzależnień do leczenia</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Będzie leczyć: {0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>Nie wykryto uzależnień ani tolerancji na narkotyki. Cykl zakończy się bez efektu.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>Trwałe uzależnienia, takie jak lucyferium, będą leczone.</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>Trwałe uzależnienia, takie jak lucyferium, nie będą leczone.</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>Lecz trwałe uzależnienia</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>Trwałe uzależnienie to takie, które sama gra oznacza jako niemożliwe do wyleczenia. W podstawowej wersji gry jedynym takim uzależnieniem jest lucyferium. Włącz tę opcję, aby cykl detoksu je usuwał.</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>Czas trwania cyklu: {0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>Jak długo pacjent pozostaje w kapsule podczas jednego cyklu detoksu. Wartość domyślna to {0}. Cykl, który już się rozpoczął, zachowuje długość, z jaką się zaczął.</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>Przywróć ustawienia domyślne</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

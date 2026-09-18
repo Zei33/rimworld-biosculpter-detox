@@ -60,26 +60,28 @@ namespace BiosculpterDetox.Patches
             {
                 try
                 {
-                    if (__instance.parent.GetComp<CompBiosculpterPod_DetoxCycle>() != null)
+                    CompBiosculpterPod_DetoxCycle existing =
+                        __instance.parent.GetComp<CompBiosculpterPod_DetoxCycle>();
+
+                    if (existing != null)
                     {
+                        // A pod that was uninstalled and put back down is the SAME Thing instance:
+                        // MinifyUtility.MakeMinified despawns the thing and hands the minified
+                        // wrapper that same object, so the comp added here survives and a second one
+                        // must not be added. It does still need its duration refreshed, because a
+                        // settings change made while the pod sat minified swept the spawned pods and
+                        // could not see this one. Without this the pod comes back running the old
+                        // length while every other pod on the map runs the new one, for the rest of
+                        // the session, since only a load rebuilds comps from def.comps.
+                        if (existing.Props != null)
+                        {
+                            existing.Props.durationDays = CurrentDurationDays();
+                        }
+
                         return;
                     }
 
-                    ResearchProjectDef research =
-                        DefDatabase<ResearchProjectDef>.GetNamedSilentFail("Bioregeneration");
-
-                    var props = new CompProperties_BiosculpterPod_DetoxCycle
-                    {
-                        key = CycleKey,
-                        label = "BiosculpterDetox_CycleLabel".Translate(),
-                        description = "BiosculpterDetox_CycleDescription".Translate(),
-                        iconPath = "UI/Commands/Detox",
-                        durationDays = 12f,
-                        operatingColor = new UnityEngine.Color(0.2f, 0.8f, 0.2f),
-                        requiredResearch = research == null
-                            ? new List<ResearchProjectDef>()
-                            : new List<ResearchProjectDef> { research }
-                    };
+                    CompProperties_BiosculpterPod_DetoxCycle props = BuildProps();
 
                     var comp = new CompBiosculpterPod_DetoxCycle
                     {
@@ -92,6 +94,129 @@ namespace BiosculpterDetox.Patches
                 catch (System.Exception exception)
                 {
                     Log.Error($"[BiosculpterDetox] Error adding the detox cycle component: {exception}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Builds the detox cycle's properties from the current settings.
+        /// </summary>
+        /// <returns>A fresh properties object for one pod.</returns>
+        /// <remarks>
+        /// <para>
+        /// One method so that the spawn postfix and the settings push cannot drift apart about what
+        /// a detox cycle is. The duration is the only field the player can move; everything else is
+        /// fixed.
+        /// </para>
+        /// <para>
+        /// Still built per pod rather than hoisted into a shared static, which would be wrong here
+        /// for the translated label. A static built once per process keeps whatever language was
+        /// active when the first pod spawned; building per spawn gets the label right, because
+        /// changing language reloads play data and returns to the menu, so every pod respawns.
+        /// </para>
+        /// <para>
+        /// The research lookup does not sit inside a swallowing try/catch. <c>GetNamed</c> does not
+        /// throw on a miss, it logs a red error and returns null, so a catch would never have caught
+        /// anything and a null would be appended to <c>requiredResearch</c> instead. Without
+        /// Ideology there is no Bioregeneration project and no biosculpter pod either, so this
+        /// cannot fire at all; the silent lookup is belt and braces against another mod removing the
+        /// project.
+        /// </para>
+        /// </remarks>
+        public static CompProperties_BiosculpterPod_DetoxCycle BuildProps()
+        {
+            ResearchProjectDef research =
+                DefDatabase<ResearchProjectDef>.GetNamedSilentFail("Bioregeneration");
+
+            return new CompProperties_BiosculpterPod_DetoxCycle
+            {
+                key = CycleKey,
+                label = "BiosculpterDetox_CycleLabel".Translate(),
+                description = "BiosculpterDetox_CycleDescription".Translate(),
+                iconPath = "UI/Commands/Detox",
+                durationDays = CurrentDurationDays(),
+                operatingColor = new UnityEngine.Color(0.2f, 0.8f, 0.2f),
+                requiredResearch = research == null
+                    ? new List<ResearchProjectDef>()
+                    : new List<ResearchProjectDef> { research }
+            };
+        }
+
+        /// <summary>
+        /// Reads the configured cycle duration, falling back to the shipped default.
+        /// </summary>
+        /// <returns>The duration in days.</returns>
+        /// <remarks>
+        /// The settings object is populated by the mod's constructor, which the game runs long
+        /// before any pod spawns. The fallback covers the order being different than expected rather
+        /// than any known case, and it returns the value this mod shipped with so that an unexpected
+        /// null changes nothing a player would notice.
+        /// </remarks>
+        private static float CurrentDurationDays()
+        {
+            BiosculpterDetoxSettings settings = BiosculpterDetoxMod.Settings;
+
+            return settings == null
+                ? BiosculpterDetoxSettings.DefaultCycleDurationDays
+                : settings.CycleDurationDays;
+        }
+
+        /// <summary>
+        /// Applies a changed duration to every detox cycle already standing on a map.
+        /// </summary>
+        /// <param name="days">The new duration, in days.</param>
+        /// <remarks>
+        /// <para>
+        /// Without this a duration change reaches no existing pod, because the properties are built
+        /// once per spawn. The player would change the setting, watch nothing happen, and reasonably
+        /// conclude the setting is broken.
+        /// </para>
+        /// <para>
+        /// A cycle already running is NOT retimed by this, and that is the game's doing rather than
+        /// a choice made here: <c>CompBiosculpterPod</c> captures the duration into its own scribed
+        /// countdown when the pawn enters, so an occupant keeps the length the cycle started with
+        /// and nothing here can strand somebody in a pod.
+        /// </para>
+        /// <para>
+        /// The progress bar is the exception, and it is worse than a brief flicker. The mote
+        /// recomputes its denominator from the live properties every tick while the countdown still
+        /// holds the old length, so shortening the duration mid-cycle pins the bar at empty for the
+        /// whole of the difference. Twelve days cut to three, with a cycle that has just begun,
+        /// shows an empty bar for nine days and then fills over the last three. Lengthening it has
+        /// the opposite effect and reads further along than the cycle really is. The numbers stay
+        /// correct throughout, the bar is bounded by the game's own clamp, and the cycle ends when
+        /// it always would have; only the drawing is wrong, and only until that cycle finishes.
+        /// </para>
+        /// <para>
+        /// Colonist buildings only. A biosculpter pod that matters to this setting is one the player
+        /// built and can put a pawn into.
+        /// </para>
+        /// </remarks>
+        public static void ApplyDurationToSpawnedPods(float days)
+        {
+            if (Current.ProgramState != ProgramState.Playing)
+            {
+                return;
+            }
+
+            List<Map> maps = Find.Maps;
+
+            if (maps == null)
+            {
+                return;
+            }
+
+            foreach (Map map in maps)
+            {
+                foreach (Building building in map.listerBuildings.allBuildingsColonist)
+                {
+                    CompBiosculpterPod_DetoxCycle cycle =
+                        building.GetComp<CompBiosculpterPod_DetoxCycle>();
+
+                    if (cycle != null && cycle.Props != null)
+                    {
+                        cycle.Props.durationDays = days;
+                    }
                 }
             }
         }

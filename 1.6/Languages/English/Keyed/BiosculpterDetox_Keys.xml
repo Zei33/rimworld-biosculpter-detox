@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>detox</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Remove every drug addiction and drug tolerance from the occupant. Withdrawal ends with the addiction that causes it. Permanent addictions such as luciferium cannot be cured.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Remove every drug addiction and drug tolerance from the occupant. Withdrawal ends with the addiction that causes it.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Detox Treatment Complete</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>No addictions to treat</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Will treat: {0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>No addictions or drug tolerances detected. The cycle will complete without effect.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>Permanent addictions such as luciferium will be treated.</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>Permanent addictions such as luciferium will not be treated.</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>Treat permanent addictions</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>A permanent addiction is one the game itself marks as impossible to cure. Luciferium is the only one in the base game. Turn this on to let the detox cycle remove them.</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>Cycle duration: {0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>How long a pawn stays in the pod for one detox cycle. The default is {0}. A cycle that has already started keeps the length it started with.</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>Reset to defaults</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

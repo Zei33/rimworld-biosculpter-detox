@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>デトックス</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>搭乗者のすべての薬物依存症と薬物耐性を取り除きます。禁断症状は、その原因となる依存症とともに消えます。ルシフェリウムのような恒久的な依存症は治療できません。</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>搭乗者のすべての薬物依存症と薬物耐性を取り除きます。禁断症状は、その原因となる依存症とともに消えます。</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>デトックス治療完了</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>治療する依存症がありません</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>治療対象：{0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>依存症も薬物耐性も検出されませんでした。この周期は効果なく終了します。</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>ルシフェリウムのような永久的な依存症も治療します。</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>ルシフェリウムのような永久的な依存症は治療しません。</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>永久的な依存症を治療する</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>永久的な依存症とは、ゲーム自体が治療不能と定めている依存症です。ゲーム本体ではルシフェリウムだけが該当します。有効にすると、デトックスサイクルがこれらも取り除きます。</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>サイクルの持続期間：{0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>デトックスサイクル1回でポッドに入っている期間です。初期値は{0}です。すでに開始しているサイクルは、開始時の期間のまま進みます。</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>デフォルトに戻す</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

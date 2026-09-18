@@ -98,15 +98,23 @@ namespace BiosculpterDetox.Core
         /// <param name="tunedFor">The pawn to analyse, which may be <c>null</c>.</param>
         /// <returns>A description of what the cycle will accomplish.</returns>
         /// <remarks>
-        /// This is unchanged in shape and now tells the truth, because the list it reads is built
-        /// from the same predicate the treatment uses. It previously came from a method that
-        /// counted addictions only, while the gate beside it counted tolerances as well, so a pawn
-        /// whose only treatable condition was a tolerance read "nothing to treat" and then had the
-        /// tolerance removed anyway.
+        /// <para>
+        /// This tells the truth because the list it reads is built from the same predicate the
+        /// treatment uses. It previously came from a method that counted addictions only, while the
+        /// gate beside it counted tolerances as well, so a pawn whose only treatable condition was a
+        /// tolerance read "nothing to treat" and then had the tolerance removed anyway.
+        /// </para>
+        /// <para>
+        /// The permanent-addiction line is stated here rather than in the cycle's static
+        /// description, and it has to be. The description on the properties object is built once
+        /// when a pod spawns, so a description that named the current policy would go stale the
+        /// moment the player changed the setting, and would keep claiming the opposite of what the
+        /// cycle now does until the next map load. This method runs every time the player looks.
+        /// </para>
         /// </remarks>
         public override string Description(Pawn tunedFor)
         {
-            string baseDescription = base.Description(tunedFor);
+            string baseDescription = base.Description(tunedFor) + "\n\n" + PermanentAddictionPolicy();
 
             if (tunedFor == null)
             {
@@ -133,6 +141,25 @@ namespace BiosculpterDetox.Core
         public bool CanUseOn(Pawn pawn)
         {
             return DetoxCycle.HasDetoxifiableConditions(pawn);
+        }
+
+        /// <summary>
+        /// States whether the cycle currently treats addictions the game declares permanent.
+        /// </summary>
+        /// <returns>The sentence to show the player.</returns>
+        /// <remarks>
+        /// Read live from the settings, and phrased in terms of permanent addictions rather than by
+        /// naming luciferium. Luciferium is the only one the shipped game has, but the rule the mod
+        /// applies is the game's own <c>everCurableByItem</c> declaration, so a mod that adds its own
+        /// permanent addiction is covered by the same sentence without this one being rewritten.
+        /// </remarks>
+        private static string PermanentAddictionPolicy()
+        {
+            BiosculpterDetoxSettings settings = BiosculpterDetoxMod.Settings;
+
+            return settings != null && settings.CureIncurableAddictions
+                ? "BiosculpterDetox_PermanentAddictionsTreated".Translate()
+                : "BiosculpterDetox_PermanentAddictionsSkipped".Translate();
         }
     }
 }

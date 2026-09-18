@@ -41,7 +41,10 @@ namespace BiosculpterDetox.Core
         /// Decides whether a hediff is a drug addiction this cycle is allowed to cure.
         /// </summary>
         /// <param name="hediff">The hediff to judge.</param>
-        /// <returns><c>true</c> when it is a curable addiction.</returns>
+        /// <param name="cureIncurableAddictions">
+        /// Whether the player has asked for addictions the game declares permanent to be treated.
+        /// </param>
+        /// <returns><c>true</c> when it is an addiction this cycle is allowed to cure.</returns>
         /// <remarks>
         /// <para>
         /// This is vanilla's own predicate, copied from <c>HealthUtility.FindAddiction</c>. The type
@@ -65,10 +68,30 @@ namespace BiosculpterDetox.Core
         /// because the gene re-adds it and the pawn dies without the drug. It happens to derive
         /// from a different base AND to set the flag false, so this pair excludes it twice.
         /// </para>
+        /// <para>
+        /// The setting relaxes the flag and nothing else, which is what makes it safe. Of the
+        /// fifteen hediffs the shipped game declares incurable, exactly one is an
+        /// <c>Hediff_Addiction</c>, and it is luciferium; the other fourteen are excluded by the
+        /// type test whatever the setting says. Biotech's chemical dependency is among those
+        /// fourteen, and it is the one that must never be removed, because the gene re-adds it and
+        /// the pawn dies without the drug. It is a sibling of <c>Hediff_Addiction</c> rather than a
+        /// subclass, so the type test alone carries that exclusion and the setting cannot reach it.
+        /// </para>
+        /// <para>
+        /// The toggle is therefore described to the player in terms of permanent addictions rather
+        /// than by naming luciferium, for the same reason nothing else in this mod matches on a
+        /// name: a mod that adds its own permanent addiction is covered by the same rule, and the
+        /// game's own declaration is what decides.
+        /// </para>
         /// </remarks>
-        public static bool IsCurableAddiction(Hediff hediff)
+        public static bool IsCurableAddiction(Hediff hediff, bool cureIncurableAddictions)
         {
-            return hediff is Hediff_Addiction && hediff.def != null && hediff.def.everCurableByItem;
+            if (!(hediff is Hediff_Addiction) || hediff.def == null)
+            {
+                return false;
+            }
+
+            return cureIncurableAddictions || hediff.def.everCurableByItem;
         }
 
         /// <summary>
@@ -120,6 +143,9 @@ namespace BiosculpterDetox.Core
         /// </summary>
         /// <param name="hediff">The hediff to judge.</param>
         /// <param name="chemicals">Every chemical in the game.</param>
+        /// <param name="cureIncurableAddictions">
+        /// Whether addictions the game declares permanent are being treated.
+        /// </param>
         /// <returns><c>true</c> when the cycle would remove it.</returns>
         /// <remarks>
         /// <para>
@@ -141,14 +167,16 @@ namespace BiosculpterDetox.Core
         /// this mod touching needs or thoughts.
         /// </para>
         /// </remarks>
-        public static bool IsDetoxifiable(Hediff hediff, IEnumerable<ChemicalDef> chemicals)
+        public static bool IsDetoxifiable(
+            Hediff hediff, IEnumerable<ChemicalDef> chemicals, bool cureIncurableAddictions)
         {
             if (hediff == null || hediff.def == null)
             {
                 return false;
             }
 
-            return IsCurableAddiction(hediff) || IsDrugTolerance(hediff.def, chemicals);
+            return IsCurableAddiction(hediff, cureIncurableAddictions)
+                || IsDrugTolerance(hediff.def, chemicals);
         }
 
         /// <summary>
@@ -156,8 +184,12 @@ namespace BiosculpterDetox.Core
         /// </summary>
         /// <param name="pawn">The pawn to examine.</param>
         /// <param name="chemicals">Every chemical in the game.</param>
+        /// <param name="cureIncurableAddictions">
+        /// Whether addictions the game declares permanent are being treated.
+        /// </param>
         /// <returns>The hediffs the cycle would remove, which may be empty.</returns>
-        public static List<Hediff> DetoxifiableConditions(Pawn pawn, IEnumerable<ChemicalDef> chemicals)
+        public static List<Hediff> DetoxifiableConditions(
+            Pawn pawn, IEnumerable<ChemicalDef> chemicals, bool cureIncurableAddictions)
         {
             var found = new List<Hediff>();
 
@@ -168,7 +200,7 @@ namespace BiosculpterDetox.Core
 
             foreach (Hediff hediff in pawn.health.hediffSet.hediffs)
             {
-                if (IsDetoxifiable(hediff, chemicals))
+                if (IsDetoxifiable(hediff, chemicals, cureIncurableAddictions))
                 {
                     found.Add(hediff);
                 }
@@ -184,7 +216,7 @@ namespace BiosculpterDetox.Core
         /// <returns><c>true</c> if the pawn has any detoxifiable condition.</returns>
         public static bool HasDetoxifiableConditions(Pawn pawn)
         {
-            return DetoxifiableConditions(pawn, AllChemicals()).Count > 0;
+            return DetoxifiableConditions(pawn, AllChemicals(), CureIncurableAddictions()).Count > 0;
         }
 
         /// <summary>
@@ -196,7 +228,8 @@ namespace BiosculpterDetox.Core
         {
             var names = new List<string>();
 
-            foreach (Hediff hediff in DetoxifiableConditions(pawn, AllChemicals()))
+            foreach (Hediff hediff in
+                     DetoxifiableConditions(pawn, AllChemicals(), CureIncurableAddictions()))
             {
                 string label = hediff.LabelCap;
 
@@ -237,6 +270,18 @@ namespace BiosculpterDetox.Core
         /// a hediff mutates the set being walked. Hediffs are re-checked as they are cured, because
         /// curing one can cascade and remove another.
         /// </para>
+        /// <para>
+        /// The permanent addiction setting is read HERE, when the cycle completes, rather than
+        /// captured when it started. A player who turns the setting off while a pawn is already in
+        /// the pod therefore gets a cycle that was offered on one promise and delivered on another,
+        /// which is a smaller cousin of the worst bug this mod has had. It is left this way
+        /// deliberately, because the alternative is worse: the only place to record the setting at
+        /// cycle start is the cycle comp, and this comp is added at runtime rather than declared in
+        /// <c>def.comps</c>, so <c>ThingWithComps.ExposeData</c> rebuilds the comp list on load and
+        /// anything scribed on it is orphaned. A captured flag would survive until the player saved
+        /// and then quietly revert, which is harder to explain than a setting that simply applies
+        /// when the cycle ends.
+        /// </para>
         /// </remarks>
         public static List<string> PerformDetox(Pawn pawn)
         {
@@ -248,7 +293,8 @@ namespace BiosculpterDetox.Core
                 return removed;
             }
 
-            foreach (Hediff hediff in DetoxifiableConditions(pawn, AllChemicals()))
+            foreach (Hediff hediff in
+                     DetoxifiableConditions(pawn, AllChemicals(), CureIncurableAddictions()))
             {
                 // Re-check rather than trusting the list. HealthUtility.Cure can remove more than
                 // the one hediff it is given, so an entry collected a moment ago may already be off
@@ -277,6 +323,32 @@ namespace BiosculpterDetox.Core
         private static List<ChemicalDef> AllChemicals()
         {
             return DefDatabase<ChemicalDef>.AllDefsListForReading;
+        }
+
+        /// <summary>
+        /// Reads whether the player has asked for permanent addictions to be treated.
+        /// </summary>
+        /// <returns><c>true</c> when the setting is on.</returns>
+        /// <remarks>
+        /// <para>
+        /// Kept to one line and one call site per public method for the same reason
+        /// <see cref="AllChemicals"/> is: it is the boundary between the decisions above, which a
+        /// test can reach, and the game state, which it cannot. Every predicate takes this as a
+        /// parameter, so a test supplies both values and never touches a static.
+        /// </para>
+        /// <para>
+        /// The null check is what stops that boundary leaking. <c>LoadedModManager.GetMod</c>
+        /// returns null outside a running game rather than throwing, so a predicate that read the
+        /// static directly would not fail loudly in the harness, it would throw a
+        /// <c>NullReferenceException</c> from somewhere unrelated. Falling back to false here means
+        /// the shipped behaviour is what an unconfigured caller gets.
+        /// </para>
+        /// </remarks>
+        private static bool CureIncurableAddictions()
+        {
+            BiosculpterDetoxSettings settings = BiosculpterDetoxMod.Settings;
+
+            return settings != null && settings.CureIncurableAddictions;
         }
     }
 }

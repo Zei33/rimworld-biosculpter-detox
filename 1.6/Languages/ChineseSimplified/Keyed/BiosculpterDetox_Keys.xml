@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>戒毒</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>清除舱内小人的所有药物成瘾与药物耐受性。戒断反应会随着引发它的成瘾一同消失。永久性成瘾（如魔鬼素）无法治愈。</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>清除舱内小人的所有药物成瘾与药物耐受性。戒断反应会随着引发它的成瘾一同消失。</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>戒毒治疗完成</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>没有成瘾需要治疗</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>将治疗：{0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>未检测到成瘾或药物耐受性。本次周期将不会产生任何效果。</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>永久性成瘾（如魔鬼素）将会被治疗。</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>永久性成瘾（如魔鬼素）将不会被治疗。</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>治疗永久性成瘾</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>永久性成瘾是指游戏本身标记为无法治愈的成瘾。游戏基础内容中只有魔鬼素属于此类。启用此项后，戒毒周期将会清除这类成瘾。</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>周期持续时间：{0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>一次戒毒周期中使用者停留在塑形舱内的时长。默认为{0}。已经开始的周期将保持其开始时的时长。</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>还原默认设置</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

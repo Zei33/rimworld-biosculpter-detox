@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>desintoxicação</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Remove todos os vícios e todas as tolerâncias a drogas do ocupante. A abstinência termina junto com o vício que a causa. Vícios permanentes como o luciferium não podem ser curados.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Remove todos os vícios e todas as tolerâncias a drogas do ocupante. A abstinência termina junto com o vício que a causa.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Tratamento de desintoxicação completo</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>Nenhum vício para tratar</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Irá tratar: {0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>Nenhum vício ou tolerância a drogas detectado. O ciclo será concluído sem efeito.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>Vícios permanentes como o lucifério serão tratados.</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>Vícios permanentes como o lucifério não serão tratados.</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>Tratar vícios permanentes</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>Um vício permanente é aquele que o próprio jogo marca como impossível de curar. O lucifério é o único no jogo base. Ative esta opção para que o ciclo de desintoxicação também os remova.</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>Duração do ciclo: {0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>Quanto tempo o ocupante permanece na cápsula em um ciclo de desintoxicação. O padrão é {0}. Um ciclo já iniciado mantém a duração com que começou.</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>Restaurar Padrões</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

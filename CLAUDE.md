@@ -2,9 +2,10 @@
 
 Adds a "detox" cycle to every biosculpter pod. A pawn who finishes it comes out with every drug
 addiction hediff and every drug tolerance hediff stripped, and the player gets a letter either way.
-The cycle runs a nominal 12 days (players see roughly 11 after the pod's speed stat) and is gated
-behind Ideology's Bioregeneration research. Permanently incurable addictions are excluded, which is
-Luciferium in vanilla, by the game's own `everCurableByItem` flag rather than by name.
+The cycle runs 12 days by default (players see roughly 11 after the pod's speed stat), adjustable
+from 1 to 30 in the mod options, and is gated behind Ideology's Bioregeneration research.
+Permanently incurable addictions are excluded unless the player turns them on, which is Luciferium
+in vanilla, decided by the game's own `everCurableByItem` flag rather than by name.
 
 **All seven issues were closed on 2026-09-18.** Most of what the trap list below used to warn about
 is gone, and what is left is marked. Read the source before acting on anything here.
@@ -91,13 +92,48 @@ Both are wrapped in `try`/`catch` + `Log.Error`. The only texture is `1.6/Textur
 - **`CompProperties` are built per pod on purpose, not hoisted to a static.** The label is translated
   at construction, and a static built once keeps whatever language was active when the first pod
   spawned. Changing language reloads play data, so every pod respawns and rebuilds correctly.
-- **There is no `ModSettings` class**, and `BiosculpterDetoxMod` overrides neither `SettingsCategory()`
-  nor `DoSettingsWindowContents(Rect)`, so the mod has no entry in the mod options. This is the
-  structural blocker behind both most-requested features, the Luciferium toggle and the duration.
-- `durationDays = 12f` is a hardcoded literal in the spawn postfix, the only occurrence in the repo.
+- **The settings are threaded as parameters, never read from a static inside a predicate.**
+  `DetoxCycle`'s predicates take `cureIncurableAddictions` the same way they take the chemical list,
+  and the static is read only at the call boundary, in the one-line `CureIncurableAddictions()`
+  beside `AllChemicals()`. This is not tidiness. `LoadedModManager.GetMod<T>()` returns **null** in
+  the test harness rather than throwing, so a predicate reading the static does not fail loudly, it
+  throws a `NullReferenceException` from somewhere unrelated and takes every predicate test with it.
+- **A pod that is uninstalled and put back down keeps this mod's comp**, because
+  `MinifyUtility.MakeMinified` despawns the existing `Thing` and hands the minified wrapper that same
+  instance. So the spawn postfix's "already has the comp" guard fires on a reinstall, and it must
+  refresh the duration on that path rather than returning, or a settings change made while the pod
+  sat minified never reaches it. Only a save and load rebuilds comps from `def.comps`.
+- **`Scribe_Values.Look` forwards its `defaultValue` only when the node is ABSENT.** A node that is
+  present but will not parse, or that carries `IsNull`, goes through
+  `ScribeExtractor.ValueFromNode`, which returns `default(T)`: zero for a float, not the default you
+  passed. That is why `ClampDuration` sends anything at or below zero to the default rather than to
+  the minimum. The parse-failure branch also calls `Log.Error` first, and `Log.Error` throws
+  `MissingMethodException` in the harness, so that one case is not testable here.
+- **The field initialiser and the `Scribe` default are read by different players and must agree.**
+  Somebody with no settings file gets `new T()` and the initialiser, because `ReadModSettings` never
+  calls `ExposeData` on it; somebody whose file predates a key gets the `defaultValue`. If the two
+  disagree the same build hands two different defaults to two different players and nothing reports
+  it.
+- **The pod snapshots the cycle duration but draws the progress bar from the live value.**
+  `CompBiosculpterPod` captures `Props.durationDays` into the scribed `currentCycleTicksRemaining`
+  when the pawn enters, so a duration change cannot retime or strand a running cycle. The progress
+  mote recomputes its denominator every tick, so shortening the duration mid-cycle pins the bar at
+  empty for the whole of the difference. Numbers stay right; only the drawing is wrong.
+- **Never write a unit into a duration string.** `"{0} days"` renders "1 days" at the minimum, and
+  worse where the noun inflects. `ToStringTicksToDays("F0")` picks between the game's own
+  `Period1Day` and `PeriodDays` keys, already translated everywhere; the Russian `PeriodDays` is
+  `{0_numCase ? день : дня : дней}`, so deferring to it buys three-way Slavic agreement for free.
+  The format must be `"F0"`, because the singular branch tests the formatted text against `"1"` and
+  `"1.0"` never matches.
+- **Known coverage gap.** No test pins the settings to the behaviour. Both settings can be unwired
+  from the game (`CureIncurableAddictions()` replaced by `false`, `CurrentDurationDays()` by `12f`)
+  and the whole suite still passes, which was measured rather than assumed. The predicates and the
+  serialisation are covered; the two lines joining them to the game are not. Simple Improve closes
+  the same gap with IL reading (`Tests/ILCalls.cs`); porting it here is the fix if this ever bites.
+- **`CompProperties` are built per pod on purpose, not hoisted to a static**, and `BuildProps()` is
+  the single place that builds them so the spawn path and the settings push cannot disagree.
   The live Workshop description still claims the time depends on the severity of the addiction;
-  nothing implements that. The repo's generated pages already state the real 12 days, so it resolves
-  when the pages are repasted.
+  nothing implements that, and the repo's generated pages state the real default.
 
 ## Defect register
 
@@ -106,9 +142,9 @@ done and what was deliberately not. The four that were confirmed high are all st
 patched over: the dead allow-lists are deleted, the Luciferium exclusion reads the game's own flag,
 the substring matching is gone entirely, and the three copies of the match test are one predicate.
 
-What remains open is a feature rather than a defect: the mod has nowhere to hang a setting, which is
-what two players have asked for. That needs its own issue and a decision about what the settings
-should be.
+**Settings landed 2026-09-18**, which closes the two standing feature requests. `BiosculpterDetoxSettings`
+adds a permanent-addiction toggle (default off, so existing subscribers are unaffected) and a cycle
+duration slider (default 12, range 1 to 30). Both were decided by Matthew.
 
 ## Open user reports
 
@@ -117,13 +153,14 @@ Nothing has shipped since 22 Aug 2025, so everything below is still live. None o
 - IQ250, 23 Aug 2025: "这种事情不要啊" ("Please don't do that!"), objecting to the Luciferium cure
   being removed in answer to his own question the day before. He wanted it, he was not reporting an exploit.
 - 深空—星魂, 5 Dec 2025: "或许可以加个设置来决定能否治疗？" asks for a setting controlling whether
-  Luciferium can be cured. There is no settings infrastructure to hang it on, so this means a settings
-  window from scratch.
+  Luciferium can be cured. **Done 2026-09-18**, as the permanent-addiction toggle, off by default.
+  Still unanswered on the Workshop, and worth answering when the pages are repasted.
 - Moonsnow, 10 Dec 2025: posts an addiction-then-cure mood sequence that nets out to zero. Not a code
   defect. The mod adds no thought and no hediff, so any mood movement is vanilla reacting to the removed
   addiction. It is a balance point about combat drug use once a pod exists.
 - 懒光, 28 Dec 2025: "可否加速治疗?11天确实有点长了" asks whether treatment can be sped up.
-  `durationDays` is hardcoded with no setting and no severity scaling.
+  **Done 2026-09-18**, as the duration slider. Severity scaling is still not implemented and was not
+  asked for; the slider is a flat duration.
 - Arthur GC, 4 Apr 2026: asks what happens with a gene that forces an addiction. Answered correctly by
   another user, Rox, on 18 Aug 2026, never by the author. No defect: Biotech dependency is
   `Hediff_ChemicalDependency` / `GeneticDrugNeed`, which matches none of the mod's four patterns.

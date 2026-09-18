@@ -81,8 +81,39 @@ is the predicates and the patch targets. These six are the parts that are still 
 6. **A completion of each kind.** One cycle that removes something and one that removes nothing,
    confirming a letter arrives both times and that the second is neutral rather than bad news.
 
+### Added 2026-09-18 with the settings window
+
+Nothing in this repo can open a settings window: `DoSettingsWindowContents` needs IMGUI. So the
+values and the serialisation are covered by `SettingsTests` and the drawing is not covered at all.
+
+7. **The settings window opens and draws.** Confirm the mod appears in the options list under its
+   own name in a non-English language, that the checkbox, the slider and the reset button all
+   render inside the window rather than off the bottom, and that both tooltips appear on hover.
+   This is the half no test reaches.
+8. **The duration slider at its minimum.** Confirm it reads "1 day" and not "1 days". The label
+   defers to the game's own `ToStringTicksToDays`, so check one inflecting language too: German
+   should say "1 Tag" against "2 Tage", and Russian should give "1 день", "2 дня", "5 дней".
+9. **A duration change reaching pods already built.** Change the slider, close the window, and
+   confirm an existing pod's float menu reports the new length WITHOUT a save and load. Then
+   uninstall a pod, change the duration, reinstall it, and confirm it also picks up the new length:
+   that path keeps the comp through the minify, so it is refreshed rather than rebuilt.
+10. **A duration change while a pod is running.** Confirm the occupant finishes at the length the
+    cycle started with, and that the progress bar misbehaves in the documented way rather than any
+    other way: shortening the duration pins it at empty for the difference. The numbers stay right.
+11. **The permanent-addiction toggle, both ways.** With it on, confirm a luciferium addiction is
+    cured and that the cycle description says so. With it off, confirm it is not. Check the
+    description updates as soon as the setting changes rather than on the next load.
+12. **A pawn with a Biotech chemical dependency, toggle ON.** The safety case, and the one with real
+    downside: confirm `GeneticDrugNeed` is NOT removed. Removing it kills the pawn, because the gene
+    re-adds it and the pawn dies without the drug. Two unit tests cover the predicate and the class
+    graph, but neither runs against the shipped hediff on a real pawn.
+13. **A config file with an unparseable duration.** Hand-edit
+    `Config/Mod_*_BiosculpterDetoxMod.xml` to something like `<cycleDurationDays>12 days</cycleDurationDays>`
+    and confirm the cycle is 12 days rather than 1, with a red Scribe error in the log. The unit
+    test cannot reach this: that path calls `Log.Error`, which throws in the harness.
+
 A dev-mode `[DebugAction]` printing what `PerformDetox` would remove from the selected pawn, without
-removing it, would make 1 and 4 cheap. It does not exist yet.
+removing it, would make 1, 4, 11 and 12 cheap. It does not exist yet.
 
 An in-game check needs Ideology, the Bioregeneration research, a pod and a genuinely addicted pawn.
 Detox is always last in the gizmo bar, because the comp is appended after the four vanilla ones.

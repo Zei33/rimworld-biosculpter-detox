@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>désintoxication</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Supprime toutes les addictions et toutes les tolérances aux drogues de l'occupant. Le manque disparaît avec l'addiction qui le cause. Les addictions permanentes comme le luciferium ne peuvent pas être soignées.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Supprime toutes les addictions et toutes les tolérances aux drogues de l'occupant. Le manque disparaît avec l'addiction qui le cause.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Traitement de désintoxication terminé</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>Aucune addiction à traiter</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Traitera : {0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>Aucune addiction ni tolérance aux drogues détectée. Le cycle se terminera sans effet.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>Les addictions permanentes comme le luciferium seront traitées.</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>Les addictions permanentes comme le luciferium ne seront pas traitées.</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>Traiter les addictions permanentes</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>Une addiction permanente est une addiction que le jeu lui-même considère comme impossible à soigner. Dans le jeu de base, seul le luciferium est concerné. Activez cette option pour que le cycle de désintoxication les supprime.</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>Durée du cycle : {0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>Durée pendant laquelle un occupant reste dans la capsule pour un cycle de désintoxication. La valeur par défaut est de {0}. Un cycle déjà commencé conserve la durée avec laquelle il a démarré.</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>Réinitialiser les valeurs par défaut</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

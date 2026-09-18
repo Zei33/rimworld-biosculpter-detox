@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>детоксикация</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Снимает с пациента все наркотические зависимости и все привыкания к препаратам. Ломка проходит вместе с зависимостью, которая её вызывает. Постоянные зависимости вроде люциферия вылечить нельзя.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Снимает с пациента все наркотические зависимости и все привыкания к препаратам. Ломка проходит вместе с зависимостью, которая её вызывает.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Детоксикационное лечение завершено</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>Нет зависимостей для лечения</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Будет лечить: {0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>Ни зависимостей, ни привыканий не обнаружено. Цикл завершится без эффекта.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>Постоянные зависимости вроде люциферия будут вылечены.</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>Постоянные зависимости вроде люциферия вылечены не будут.</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>Лечить постоянные зависимости</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>Постоянными считаются зависимости, которые сама игра помечает как неизлечимые. Без модов такая зависимость только одна: люциферий. Включите, чтобы цикл детоксикации снимал и их.</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>Длительность цикла: {0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>Сколько времени пациент проводит в капсуле биоскульптора за один цикл детоксикации. По умолчанию {0}. Уже запущенный цикл сохраняет ту длительность, с которой начался.</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>Восстановить по умолчанию</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>

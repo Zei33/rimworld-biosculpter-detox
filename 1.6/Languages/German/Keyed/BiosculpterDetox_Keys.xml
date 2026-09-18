@@ -3,7 +3,7 @@
   
   <!-- Cycle definition -->
   <BiosculpterDetox_CycleLabel>Entgiftung</BiosculpterDetox_CycleLabel>
-  <BiosculpterDetox_CycleDescription>Entfernt jede Drogensucht und jede Drogentoleranz des Insassen. Der Entzug endet mit der Sucht, die ihn verursacht. Dauerhafte Süchte wie Luciferium können nicht geheilt werden.</BiosculpterDetox_CycleDescription>
+  <BiosculpterDetox_CycleDescription>Entfernt jede Drogensucht und jede Drogentoleranz des Insassen. Der Entzug endet mit der Sucht, die ihn verursacht.</BiosculpterDetox_CycleDescription>
   
   <!-- Letter messages -->
   <BiosculpterDetox_LetterTitle>Entgiftungsbehandlung abgeschlossen</BiosculpterDetox_LetterTitle>
@@ -16,5 +16,15 @@
   <BiosculpterDetox_NoAddictionsToTreat>Keine Sucht zu behandeln</BiosculpterDetox_NoAddictionsToTreat>
   <BiosculpterDetox_WillTreat>Wird behandeln: {0}</BiosculpterDetox_WillTreat>
   <BiosculpterDetox_NoConditionsToTreat>Keine Sucht und keine Drogentoleranz festgestellt. Der Zyklus wird ohne Wirkung enden.</BiosculpterDetox_NoConditionsToTreat>
+  <BiosculpterDetox_PermanentAddictionsTreated>Dauerhafte Süchte wie Luziferium werden behandelt.</BiosculpterDetox_PermanentAddictionsTreated>
+  <BiosculpterDetox_PermanentAddictionsSkipped>Dauerhafte Süchte wie Luziferium werden nicht behandelt.</BiosculpterDetox_PermanentAddictionsSkipped>
+  
+  <!-- Mod settings -->
+  <BiosculpterDetox_SettingsCategory>Biosculpter Detox</BiosculpterDetox_SettingsCategory>
+  <BiosculpterDetox_CureIncurableAddictions>Dauerhafte Süchte behandeln</BiosculpterDetox_CureIncurableAddictions>
+  <BiosculpterDetox_CureIncurableAddictionsTooltip>Eine dauerhafte Sucht ist eine, die das Spiel selbst als unheilbar kennzeichnet. Im Grundspiel ist Luziferium die einzige. Aktiviere diese Option, damit der Entgiftungszyklus sie entfernt.</BiosculpterDetox_CureIncurableAddictionsTooltip>
+  <BiosculpterDetox_CycleDuration>Zyklusdauer: {0}</BiosculpterDetox_CycleDuration>
+  <BiosculpterDetox_CycleDurationTooltip>Wie lange ein Insasse für einen Entgiftungszyklus in der Kapsel bleibt. Der Standardwert beträgt {0}. Ein bereits laufender Zyklus behält die Dauer, mit der er begonnen wurde.</BiosculpterDetox_CycleDurationTooltip>
+  <BiosculpterDetox_ResetToDefaults>Auf Standard zurücksetzen</BiosculpterDetox_ResetToDefaults>
   
 </LanguageData>
