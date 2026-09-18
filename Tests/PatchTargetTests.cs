@@ -105,6 +105,23 @@ namespace BiosculpterDetox.Tests
         }
 
         [Test]
+        public void TheCycleComponentIsNotSealed()
+        {
+            // The component is added at runtime with AllComps.Add, which does not populate
+            // compsByType. GetComp<T> consults that dictionary once a thing has three or more
+            // comps, and a vanilla biosculpter pod has well over three, so the lookup misses. It
+            // still finds the component, because GetComp falls through to a linear scan for an
+            // UNSEALED T and only returns null early for a sealed one.
+            //
+            // So sealing this class would turn a linear scan into a null, and the spawn postfix
+            // uses exactly that lookup as its "have I already added this" test. The component would
+            // be appended again on every spawn, and the pod would grow a duplicate cycle each time.
+            Assert.That(typeof(Core.CompBiosculpterPod_DetoxCycle).IsSealed, Is.False,
+                "Sealing the cycle component makes GetComp<T> return null for it on any thing with "
+                + "three or more comps, which is every biosculpter pod.");
+        }
+
+        [Test]
         public void NothingIdentifiesAGizmoOrACycleByItsLabel()
         {
             // The rule this repo has been burned by: Command.defaultLabel is a display label and is

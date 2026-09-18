@@ -1,140 +1,96 @@
-# BiosculpterDetox Mod Architecture
+# Architecture
 
-## Overview
+How Biosculpter Detox is put together, and why.
 
-BiosculpterDetox is a RimWorld mod that adds a new cycle to biosculpter pods, allowing pawns to cure drug addictions and withdrawal symptoms. The mod integrates seamlessly with RimWorld's existing biosculpter system while maintaining compatibility with other mods.
+## The problem it solves structurally
 
-## Project Structure
+RimWorld biosculpter cycles are not defs. There is no `BiosculpterPodCycleDef` type. A cycle is a
+`CompBiosculpterPod_Cycle` component sitting on the pod's thing alongside the pod's own
+`CompBiosculpterPod`, and vanilla finds them with `AllComps.OfType<CompBiosculpterPod_Cycle>()`.
 
-```
-rimworld-biosculpter-detox/
-├── 1.6/
-│   ├── ModEntry.cs                     # Main mod entry point
-│   ├── Core/                           # Core functionality
-│   │   ├── BiosculpterDetoxDefOf.cs   # Definition references
-│   │   └── DetoxCycle.cs              # Detox cycle implementation
-│   ├── Defs/                          # XML definitions
-│   │   └── BiosculpterCycleDefs/      # Biosculpter cycle definitions
-│   │       └── Cycles_Detox.xml
-│   ├── Patches/                       # Harmony patches
-│   │   └── BiosculpterPatches.cs      # Patches for biosculpter functionality
-│   ├── Languages/                     # Localization (9 languages)
-│   ├── Textures/                      # UI graphics
-│   │   └── UI/Commands/Detox.png      # Detox cycle icon
-│   └── Libraries/
-│       └── 0Harmony.dll               # Harmony patching library
-├── Documentation/
-│   ├── Architecture.md                # This file
-│   └── Features.md                    # Feature documentation
-└── README.md                          # Main documentation
-```
+That means a mod adding a cycle has to get a component onto the pod. This mod does it by patching
+`CompBiosculpterPod.PostSpawnSetup` and appending one.
 
-## Key Components
+## Components
 
-### ModEntry
-- Entry point for the mod
-- Initializes Harmony patches using the ID "com.zei33.biosculpterdetox"
-- Logs successful initialization
+| File | Role |
+|---|---|
+| `1.6/ModEntry.cs` | `BiosculpterDetoxMod : Mod`. Creates the Harmony instance `com.zei33.biosculpterdetox` and calls `PatchAll()`. |
+| `1.6/Patches/BiosculpterPatches.cs` | All three Harmony patches, as nested classes. Postfixes only. |
+| `1.6/Core/CompProperties_BiosculpterPod_DetoxCycle.cs` | The properties class, which only sets `compClass`. |
+| `1.6/Core/CompBiosculpterPod_DetoxCycle.cs` | The cycle itself. Overrides `CycleCompleted` and `Description`, and answers `CanUseOn`. |
+| `1.6/Core/DetoxCycle.cs` | The decisions: what counts as treatable, and the treatment. No UI, no patching. |
 
-### Core System
+There is no `Defs` folder. The mod ships none, and does not need one.
 
-#### BiosculpterDetoxDefOf
-- Static class providing compile-time safe references to XML definitions
-- Ensures proper initialization of mod definitions
+## Harmony surface
 
-#### DetoxCycle
-- Core logic for the detox functionality
-- Handles identification and removal of drug addictions and withdrawal effects
-- Supports both vanilla and modded drugs through pattern matching
-- Provides UI feedback and success notifications
+Three patches, all postfixes, all on `RimWorld.CompBiosculpterPod`.
 
-### Harmony Integration
+| Target | What it does |
+|---|---|
+| `PostSpawnSetup` | Appends the detox cycle component to the pod. |
+| `CannotUseNowPawnCycleReason(Pawn, Pawn, CompBiosculpterPod_Cycle, bool)` | Returns a reason when the chosen pawn has nothing to treat. |
+| `PostExposeData` | Rewrites this mod's old, unnamespaced cycle key when an older save loads. |
 
-#### BiosculpterPatches
-The mod uses several Harmony patches to integrate with the biosculpter system:
+The second one names its argument types because that method has two public overloads and an
+attribute without them does not resolve. The four-parameter one is the real body.
 
-1. **CompBiosculpter_CycleCompleted_Patch**
-   - Postfix patch that triggers detox logic when a detox cycle completes
-   - Handles success notifications and letter sending
+## Deciding what to treat
 
-2. **CompBiosculpter_GetGizmos_Patch** 
-   - Modifies biosculpter UI to show detox-specific information
-   - Disables detox option if no addictions are present
-   - Shows preview of what will be treated
+`DetoxCycle` holds three predicates and nothing else decides anything.
 
-3. **CompBiosculpter_CompInspectStringExtra_Patch**
-   - Adds detox information to biosculpter inspection text
-   - Shows what conditions are being treated during cycle
+- An addiction is `hediff is Hediff_Addiction && hediff.def.everCurableByItem`. This is vanilla's
+  own test, from `HealthUtility.FindAddiction`, and `everCurableByItem` is what the vanilla healing
+  cycle gates on. Both halves are needed: the flag alone is a general medical flag that most
+  non-drug conditions also use, and the type alone would catch Biotech's
+  `Hediff_ChemicalDependency`, whose removal kills the pawn.
+- A tolerance is a def carrying `HediffCompProperties_DrugEffectFactor`, or a def that some
+  `ChemicalDef` names as its `toleranceHediff`. Tolerance has no distinguishing class to test, so
+  the comp is the only structural marker.
+- Withdrawal is not tested for, because it is not a hediff. It is stage index 1 of the addiction
+  hediff, chosen from the pawn's chemical need level, so curing the addiction ends it.
 
-### XML Definitions
+The predicates take the chemical list as a parameter rather than reading `DefDatabase`. That is
+what makes them reachable from the test project, which cannot touch the database.
 
-#### BiosculpterCycle_Detox
-- Defines the detox cycle with appropriate duration, power, and nutrition requirements
-- Duration: 12 days (same as pleasure cycle)
-- Power: 200W consumption
-- Nutrition: 5 units required
-- Research requirement: Bioregeneration technology
+Removal goes through `HealthUtility.Cure`, which honours `cureAllAtOnceIfCuredByItem`. Hediffs are
+re-checked as they are cured, because curing one can cascade.
 
-## Technical Implementation
+## Completion
 
-### Addiction Detection
-The mod identifies detoxifiable conditions through multiple methods:
+`CompBiosculpterPod.CycleCompleted` calls the cycle's `CycleCompleted(occupant)` and then ejects
+the pawn, in that order, so mod code runs while the pawn is still despawned inside the pod's
+container. Two consequences:
 
-1. **Hardcoded Lists**: Vanilla drug addictions and withdrawals
-2. **Pattern Matching**: Detects modded drugs using naming conventions:
-   - Hediffs starting with "Addiction_"
-   - Hediffs ending with "Withdrawal" or "Addiction"
-   - Hediffs containing "Tolerance"
+- `occupant.Map` is null. Anything positional, a mote for example, has to use the pod.
+- A letter's look target still works, because target validity does not require the thing to be
+  spawned, and by the time the player clicks it the pawn is out.
 
-### Detox Process
-When a detox cycle completes:
+Both outcomes send a letter. That diverges from vanilla, which uses `Messages.Message` for its own
+cycles; the reasons are the 12-day length and that the success letter is the shipped behaviour.
 
-1. Scan pawn's health for detoxifiable conditions
-2. Remove all identified addiction and withdrawal hediffs
-3. Clear drug tolerance hediffs
-4. Apply positive mood buff (using existing cathartic meditation hediff)
-5. Show visual feedback and send notification letter
+## State
 
-### Mod Compatibility
-The mod is designed for maximum compatibility:
+The component is never serialised. `ThingWithComps.ExposeData` rebuilds `comps` strictly from
+`def.comps` on load, so a runtime-added component is destroyed on every load and re-added by the
+spawn postfix. The component therefore holds no state and must not start holding any.
 
-- Uses only postfix patches to avoid conflicts
-- Leverages existing RimWorld systems (hediffs, notifications, etc.)
-- Supports modded drugs through pattern matching
-- Does not modify core game files
+The cycle key is persisted, though, by vanilla, inside `CompBiosculpterPod.currentCycleKey`. That
+is why renaming it needed the migration patch: a saved key that no longer resolves throws out of
+the pod's tick and traps the occupant.
 
-### Localization Support
-Complete localization support for 9 languages:
-- English
-- Chinese Simplified
-- French  
-- German
-- Japanese
-- Polish
-- Portuguese Brazilian
-- Russian
-- Spanish
+`AllComps.Add` does not populate `compsByType`, so `GetComp<CompBiosculpterPod_DetoxCycle>()` falls
+through to a linear scan over the pod's comps. That is a cost, not a fault, and it stays a cost
+only while the component is unsealed: `GetComp<T>` returns null early for a sealed `T` that the
+dictionary does not contain. Do not seal it.
 
-Each language includes all UI strings, notifications, and descriptions.
+## Configuration
 
-## Extension Points
+There is none. The mod ships no `ModSettings` class, and `BiosculpterDetoxMod` overrides neither
+`SettingsCategory()` nor `DoSettingsWindowContents(Rect)`, so it has no entry in the mod options.
+The 12-day duration is a literal in the spawn postfix.
 
-### Adding New Detoxifiable Conditions
-To extend the mod for new types of addictions:
-
-1. Add the hediff def name to appropriate lists in `DetoxCycle.cs`
-2. Ensure pattern matching covers the naming convention
-3. Test compatibility with the new conditions
-
-### Customizing Cycle Parameters
-The cycle definition in `Cycles_Detox.xml` can be modified to adjust:
-- Duration (durationDays)
-- Power consumption (powerConsumption)  
-- Nutrition requirements (nutritionRequired)
-- Research prerequisites (requiredResearch)
-
-### UI Customization
-The Harmony patches in `BiosculpterPatches.cs` can be extended to add:
-- Additional UI information
-- Custom warnings or requirements
-- Enhanced visual feedback
+The cycle properties are built per pod rather than once into a static. That is deliberate: the
+label and description are translated at construction, and a static built once would keep whatever
+language was active when the first pod spawned.
