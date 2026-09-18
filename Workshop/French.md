@@ -22,8 +22,8 @@ Soigner une addiction revient d'ordinaire à enfermer un colon et à attendre la
 
 [h2]CE QUI N'EST PAS TRAITÉ[/h2]
 [list]
-[*] L'addiction au luciférium n'est jamais retirée, car les mécanites ne peuvent pas être extraites
-[*] La tolérance au luciférium est laissée intacte pour la même raison
+[*] L'addiction au luciferium n'est jamais retirée, car les mécanites ne peuvent pas être extraites
+[*] La tolérance au luciferium est laissée intacte pour la même raison
 [*] Les blessures, les parties du corps manquantes et tout ce qui n'est pas une dépendance aux drogues restent inchangés
 [/list]
 

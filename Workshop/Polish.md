@@ -22,8 +22,8 @@ Leczenie uzależnienia zwykle oznacza zamknięcie kolonisty i przeczekanie głod
 
 [h2]CZEGO NIE RUSZA[/h2]
 [list]
-[*] Uzależnienie od luciferium nigdy nie jest usuwane, ponieważ mechanitów nie da się wydostać z organizmu
-[*] Tolerancja na luciferium pozostaje z tego samego powodu
+[*] Uzależnienie od lucyferium nigdy nie jest usuwane, ponieważ mechanitów nie da się wydostać z organizmu
+[*] Tolerancja na lucyferium pozostaje z tego samego powodu
 [*] Rany, brakujące części ciała i wszystko, co nie jest uzależnieniem od narkotyków, pozostaje nietknięte
 [/list]
 

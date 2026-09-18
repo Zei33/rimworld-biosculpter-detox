@@ -22,8 +22,8 @@ Eine Sucht zu heilen bedeutet normalerweise, einen Kolonisten wegzusperren und d
 
 [h2]WAS UNBERÜHRT BLEIBT[/h2]
 [list]
-[*] Luciferium-Sucht wird niemals entfernt, weil die Mechaniten nicht wieder herausgeholt werden können
-[*] Luciferium-Toleranz bleibt aus demselben Grund bestehen
+[*] Luziferium-Sucht wird niemals entfernt, weil die Mechaniten nicht wieder herausgeholt werden können
+[*] Luziferium-Toleranz bleibt aus demselben Grund bestehen
 [*] Verletzungen, fehlende Körperteile und alles, was keine Drogenabhängigkeit ist, bleiben unverändert
 [/list]
 
