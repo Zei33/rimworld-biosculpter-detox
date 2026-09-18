@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "slug": "biosculpter-detox",
+  "languages": {
+    "English": {
+      "title": "Biosculpter Detox [1.6]",
+      "name": "Biosculpter Detox",
+      "blurb": "Adds a detox cycle to the biosculpter pod that cures drug addictions and clears the tolerances behind them."
+    },
+    "ChineseSimplified": {
+      "title": "生物雕塑戒毒 [1.6] (Biosculpter Detox)",
+      "name": "生物雕塑戒毒",
+      "blurb": "为塑形舱添加戒毒周期，治愈毒品成瘾并清除背后的耐药性。"
+    },
+    "French": {
+      "title": "Désintoxication Biosculpteur [1.6] (Biosculpter Detox)",
+      "name": "Désintoxication Biosculpteur",
+      "blurb": "Ajoute à la capsule de biosculptage un cycle de désintoxication qui soigne les addictions aux drogues et supprime les tolérances qui les accompagnent."
+    },
+    "German": {
+      "title": "Bioskulpter Entgiftung [1.6] (Biosculpter Detox)",
+      "name": "Bioskulpter Entgiftung",
+      "blurb": "Fügt der Bioformerkapsel einen Entgiftungszyklus hinzu, der Drogensüchte heilt und die dahinterliegenden Toleranzen entfernt."
+    },
+    "Japanese": {
+      "title": "バイオスカルプター解毒 [1.6] (Biosculpter Detox)",
+      "name": "バイオスカルプター解毒",
+      "blurb": "生体改造ポッドにデトックスサイクルを追加し、薬物依存症を治療して背後にある耐性も消去します。"
+    },
+    "Polish": {
+      "title": "Bioskulptor Detoks [1.6] (Biosculpter Detox)",
+      "name": "Bioskulptor Detoks",
+      "blurb": "Dodaje do kapsuły biorzeźbiarskiej cykl detoksykacji, który leczy uzależnienia od narkotyków i usuwa stojącą za nimi tolerancję."
+    },
+    "PortugueseBrazilian": {
+      "title": "Desintoxicação Biosculptor [1.6] (Biosculpter Detox)",
+      "name": "Desintoxicação Biosculptor",
+      "blurb": "Adiciona ao bioescultor um ciclo de desintoxicação que cura vícios em drogas e limpa as tolerâncias por trás deles."
+    },
+    "Russian": {
+      "title": "Детоксикация Биоскульптора [1.6] (Biosculpter Detox)",
+      "name": "Детоксикация Биоскульптора",
+      "blurb": "Добавляет биоскульптору цикл детоксикации, который лечит наркотические зависимости и снимает стоящую за ними толерантность."
+    },
+    "Spanish": {
+      "title": "Desintoxicación Biosculptor [1.6] (Biosculpter Detox)",
+      "name": "Desintoxicación Biosculptor",
+      "blurb": "Añade a la cápsula de bioescultura un ciclo de desintoxicación que cura las adicciones a las drogas y elimina las tolerancias que hay detrás."
+    }
+  },
+  "required_strings": []
+}
