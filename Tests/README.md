@@ -83,6 +83,17 @@ Every issue in this repo was closed on 2026-09-18, and the harness cannot run an
 entry point takes a `Pawn`, and Harmony cannot patch on this runtime at all. What the tests cover
 is the predicates and the patch targets. The checks below are the parts that are still a claim.
 
+**Results.** Checks 1 to 13 were run in game on 2026-09-18 against `21c7756` (RimWorld 1.6.4871,
+dev and god mode) and all thirteen passed, including 3, 7 and 8 in Polish, German and Russian, and 5
+against a save written by the August 2025 Workshop build. Check 14's premise was found that day as
+a live `NullReferenceException`. On 2026-09-19, against the build that ships (`2158317` installed by
+`build.sh`, in a fresh session so the shared `Log.ErrorOnce` key was unspent), check 14 passed: the
+refilled biotuned button was greyed with the refusal, a click logged nothing, and a tolerance
+re-enabled it while paused, in English and Polish. Its two optional bullets were not run. Check 15
+passed: the Russian strings read "цикл детоксикации", and a female colonist's letters in Russian
+and Polish carried no masculine verb. The reworded refusal and the bracket-free "Cured:" line were
+read in the same session.
+
 ### Setting up
 
 Every procedure below assumes this. It was read out of the decompiled pod and checked against the
