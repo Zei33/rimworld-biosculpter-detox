@@ -132,7 +132,19 @@ namespace BiosculpterDetox.Tests
             // this test failed on BiosculpterPatches.cs, whose comment EXPLAINING why the label
             // match was removed contains the word. A test that reads source as prose cannot tell a
             // use from a description of one.
-            foreach (string file in Directory.GetFiles(SourceRoot(), "*.cs", SearchOption.AllDirectories))
+            string[] files = Directory.GetFiles(SourceRoot(), "*.cs", SearchOption.AllDirectories);
+
+            // The control, without which this test passes by scanning nothing: an empty sweep never
+            // enters the loop, and "no file reads defaultLabel" becomes indistinguishable from "no
+            // file was read". The premise, that there is C# under 1.6, is a fact about the layout of
+            // the repository rather than something this test establishes, so it has to be asserted
+            // rather than inherited. Every other test in this fixture works through reflection on the
+            // built assembly, so nothing here would fail in its place.
+            Assert.That(
+                files, Is.Not.Empty,
+                "Found no C# under " + SourceRoot() + ", so this test scanned nothing.");
+
+            foreach (string file in files)
             {
                 string source = CodeOnly(File.ReadAllText(file));
 
