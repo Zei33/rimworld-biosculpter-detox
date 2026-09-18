@@ -83,10 +83,15 @@ Both are wrapped in `try`/`catch` + `Log.Error`. The only texture is `1.6/Textur
   addiction". Nothing implements that: no severity input, no scaling. `README.md:25` and
   `Documentation/Features.md:29` correctly say a flat 12 days, so the store page is the odd one out. Both
   also claim this matches the pleasure cycle; pleasure is 4, medic 6, ageReversal 8, bioregeneration 25.
-- This repo has no `Workshop/` folder. Simple Improve and Chrono Save each carry 9 translated
-  description `.md` files; this one has none, so its store copy exists only on Steam and cannot be
-  regenerated from the repo. Description changes have to be made by hand on a Workshop page that is
-  region-blocked from this machine.
+- ~~This repo has no `Workshop/` folder.~~ **Fixed 2026-09-18**, commit `7a79092`. It carries nine
+  translated description `.md` files now, like Simple Improve and Chrono Save, and unlike either of
+  those they are **generated** rather than hand-maintained: edit
+  `Workshop/src/body/<Language>.bbcode` and rerun `workshop-content-builder`, never the `.md` itself,
+  which the builder refuses to overwrite once hand-edited. So a fix that changes player-visible
+  behaviour costs a regeneration rather than a nine-language translation job. The new copy already
+  states the real 12 day duration and drops the treatment preview and withdrawal removal claims, so
+  the copy half of B-3 is settled ahead of the code half. Matthew still pastes the pages into Steam
+  by hand at release; the website is region-blocked from this machine.
 - `DefDatabase<ResearchProjectDef>.GetNamed("Bioregeneration")` at `BiosculpterPatches.cs:44` throws
   without Ideology, straight into the swallowing catch, so the mod silently does nothing. `About.xml`
   declares only the Harmony dependency and never declares Ideology.
