@@ -2,7 +2,7 @@
 <ModMetaData>
   <name>Biosculpter Detox [1.6]</name>
   <author>Zei33</author>
-  <modVersion>1.0.1</modVersion>
+  <modVersion>1.1.0</modVersion>
   <packageId>Zei33.BiosculpterDetox</packageId>
   <description>Adds a detox cycle to the biosculpter pod. A pawn who completes it has every drug addiction and every drug tolerance removed. Withdrawal ends with the addiction that causes it. Permanent addictions such as luciferium are left alone unless you turn that on in the mod options, where you can also set how long the cycle takes. Requires the Ideology expansion, which is what adds the biosculpter pod.</description>
   <supportedVersions>

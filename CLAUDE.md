@@ -10,7 +10,8 @@ in vanilla, decided by the game's own `everCurableByItem` flag rather than by na
 **All seven issues were closed on 2026-09-18.** Most of what the trap list below used to warn about
 is gone, and what is left is marked. Read the source before acting on anything here.
 
-Released, v1.0.1, Workshop 3540117812, 1706 subscribers, last Workshop update 22 Aug 2025. Full audit with
+Released, v1.0.1 live on the Workshop (3540117812, 1706 subscribers, last updated 22 Aug 2025).
+`About.xml` says 1.1.0, unreleased on `main`. Full audit with
 evidence: `/Users/matthewscott/Programming/rimworld/docs/recon/2026-09-17-recon-dossier.md` (grep the repo name).
 
 ## Architecture
@@ -208,7 +209,6 @@ dotnet build rimworld-biosculpter-detox.sln -c Release   # clean, zero warnings
 
 Workspace defaults apply (packageId `Zei33.BiosculpterDetox`, Harmony `com.zei33.biosculpterdetox`, nine
 languages, XML doc comments on public members). Two differences: namespaces here are `BiosculpterDetox`,
-`.Core` and `.Patches` only, with `Core` holding domain logic rather than defs; and every `Log.Message`
-is ungated, where the house pattern (Simple Improve) wraps informational logging in `if (Prefs.DevMode)`
-and leaves `Log.Error` alone. `ModEntry.cs:28` also logs "Loaded version 1.0" while `About.xml:5` says
-`1.0.1`.
+`.Core` and `.Patches` only, with `Core` holding domain logic rather than defs. The one `Log.Message`
+is the load line in `ModEntry`, gated on `Prefs.DevMode` and reading `pack.ModMetaData.ModVersion`, so
+`About.xml` is the only place the version is written down. `Log.Error` is left ungated.
