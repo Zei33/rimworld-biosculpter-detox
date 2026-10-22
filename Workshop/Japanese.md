@@ -1,4 +1,4 @@
-バイオスカルプター解毒 [1.6] (Biosculpter Detox)
+バイオスカルプター解毒 [1.6/1.7] (Biosculpter Detox)
 
 [h1]バイオスカルプター解毒[/h1]
 

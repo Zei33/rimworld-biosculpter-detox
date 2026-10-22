@@ -1,4 +1,4 @@
-Désintoxication Biosculpteur [1.6] (Biosculpter Detox)
+Désintoxication Biosculpteur [1.6/1.7] (Biosculpter Detox)
 
 [h1]Désintoxication Biosculpteur[/h1]
 

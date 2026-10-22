@@ -1,4 +1,4 @@
-Biosculpter Detox [1.6]
+Biosculpter Detox [1.6/1.7]
 
 [h1]Biosculpter Detox[/h1]
 
